@@ -1,0 +1,2161 @@
+{
+  "target": "there.shu.edu.cn",
+  "shared_service_assessment": "strongly_supported_api_surface; physical_backend_and_cross_scope_permissions_unknown",
+  "cross_entry_proofs": {
+    "same_profile_id": true,
+    "same_corp_id": true,
+    "same_roles": true,
+    "same_x_hys_session": false,
+    "same_cookies_by_name": {
+      "SPHYS_SESSION": false,
+      "authenticityToken": false,
+      "HYS_LANG": true
+    }
+  },
+  "resource_types": [
+    {
+      "value": "ROOM",
+      "name": "空间",
+      "evidence_level": "html_configuration_only",
+      "page_entry": null
+    },
+    {
+      "value": "SEAT",
+      "name": "工位",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/seat-mgr"
+    },
+    {
+      "value": "SEAT2",
+      "name": "环化学院工位",
+      "evidence_level": "html_configuration_only",
+      "page_entry": null
+    },
+    {
+      "value": "STATION",
+      "name": "24小时座位",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/seat2021"
+    },
+    {
+      "value": "STATION2",
+      "name": "办公室工位",
+      "evidence_level": "html_configuration_only",
+      "page_entry": null
+    },
+    {
+      "value": "LIB_SEAT",
+      "name": "图书馆自修区",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/libseat"
+    },
+    {
+      "value": "CS_SEAT",
+      "name": "交流展示中心",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/csseat"
+    }
+  ],
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/api/v3/my/profile",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "当前用户",
+      "evidence_level": "observed_request",
+      "observed_call_count": 4,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#68",
+        "24H学习空间预约.har#36",
+        "延长智能中心预约.har#63",
+        "科学与艺术中心预约.har#62"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/my/bookings/recent",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "最近预约",
+      "evidence_level": "observed_request",
+      "observed_call_count": 16,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#66",
+        "校本部图书馆预约.har#38",
+        "校本部图书馆预约.har#33",
+        "校本部图书馆预约.har#17",
+        "校本部图书馆预约.har#4",
+        "24H学习空间预约.har#35",
+        "24H学习空间预约.har#13",
+        "24H学习空间预约.har#1",
+        "延长智能中心预约.har#64",
+        "延长智能中心预约.har#25",
+        "延长智能中心预约.har#2",
+        "科学与艺术中心预约.har#60",
+        "科学与艺术中心预约.har#33",
+        "科学与艺术中心预约.har#27",
+        "科学与艺术中心预约.har#24",
+        "科学与艺术中心预约.har#2"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/booking-status/overview",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "日期概览",
+      "evidence_level": "observed_request",
+      "observed_call_count": 20,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#67",
+        "校本部图书馆预约.har#56",
+        "校本部图书馆预约.har#53",
+        "校本部图书馆预约.har#35",
+        "校本部图书馆预约.har#31",
+        "校本部图书馆预约.har#29",
+        "校本部图书馆预约.har#27",
+        "校本部图书馆预约.har#14",
+        "24H学习空间预约.har#27",
+        "24H学习空间预约.har#37",
+        "延长智能中心预约.har#53",
+        "延长智能中心预约.har#44",
+        "延长智能中心预约.har#41",
+        "延长智能中心预约.har#23",
+        "科学与艺术中心预约.har#51",
+        "科学与艺术中心预约.har#47",
+        "科学与艺术中心预约.har#42",
+        "科学与艺术中心预约.har#30",
+        "科学与艺术中心预约.har#32",
+        "科学与艺术中心预约.har#23"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/booking-status/areas",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "区域列表",
+      "evidence_level": "observed_request",
+      "observed_call_count": 10,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#57",
+        "校本部图书馆预约.har#55",
+        "校本部图书馆预约.har#54",
+        "24H学习空间预约.har#38",
+        "延长智能中心预约.har#52",
+        "延长智能中心预约.har#45",
+        "延长智能中心预约.har#42",
+        "科学与艺术中心预约.har#61",
+        "科学与艺术中心预约.har#46",
+        "科学与艺术中心预约.har#41"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/booking-status/areas/{areaId}",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "区域座位与规则",
+      "evidence_level": "observed_request",
+      "observed_call_count": 24,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#47",
+        "校本部图书馆预约.har#41",
+        "校本部图书馆预约.har#40",
+        "校本部图书馆预约.har#37",
+        "校本部图书馆预约.har#30",
+        "校本部图书馆预约.har#26",
+        "校本部图书馆预约.har#22",
+        "校本部图书馆预约.har#21",
+        "校本部图书馆预约.har#19",
+        "24H学习空间预约.har#21",
+        "24H学习空间预约.har#16",
+        "24H学习空间预约.har#15",
+        "24H学习空间预约.har#12",
+        "延长智能中心预约.har#32",
+        "延长智能中心预约.har#28",
+        "延长智能中心预约.har#27",
+        "延长智能中心预约.har#20",
+        "科学与艺术中心预约.har#38",
+        "科学与艺术中心预约.har#36",
+        "科学与艺术中心预约.har#35",
+        "科学与艺术中心预约.har#31",
+        "科学与艺术中心预约.har#29",
+        "科学与艺术中心预约.har#26",
+        "科学与艺术中心预约.har#22"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/bookings",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "创建预约",
+      "evidence_level": "observed_request",
+      "observed_call_count": 8,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#39",
+        "校本部图书馆预约.har#34",
+        "校本部图书馆预约.har#20",
+        "24H学习空间预约.har#14",
+        "延长智能中心预约.har#26",
+        "科学与艺术中心预约.har#34",
+        "科学与艺术中心预约.har#28",
+        "科学与艺术中心预约.har#25"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v3/bookings/{bookingId}",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "预约详情",
+      "evidence_level": "observed_request",
+      "observed_call_count": 4,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#12",
+        "24H学习空间预约.har#9",
+        "延长智能中心预约.har#18",
+        "科学与艺术中心预约.har#17"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v3/bookings/{bookingId}/cancel",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "取消预约",
+      "evidence_level": "observed_request",
+      "observed_call_count": 3,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "observed_request",
+        "SEAT2": "not_observed",
+        "STATION": "javascript_reference",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "observed_request",
+        "CS_SEAT": "observed_request"
+      },
+      "evidence": [
+        "校本部图书馆预约.har#5",
+        "延长智能中心预约.har#3",
+        "科学与艺术中心预约.har#3"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v3/bookings/{bookingId}/finish",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "提前结束预约",
+      "evidence_level": "observed_request",
+      "observed_call_count": 1,
+      "resource_type_evidence": {
+        "ROOM": "not_observed",
+        "SEAT": "javascript_reference",
+        "SEAT2": "not_observed",
+        "STATION": "observed_request",
+        "STATION2": "not_observed",
+        "LIB_SEAT": "javascript_reference",
+        "CS_SEAT": "javascript_reference"
+      },
+      "evidence": [
+        "24H学习空间预约.har#2"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v3/bookings/{bookingId}/checkInUse",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "【JS 引用】签到使用预约",
+      "evidence_level": "javascript_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": {
+        "ROOM": "unknown",
+        "SEAT": "unknown",
+        "SEAT2": "unknown",
+        "STATION": "unknown",
+        "STATION2": "unknown",
+        "LIB_SEAT": "javascript_reference",
+        "CS_SEAT": "unknown"
+      },
+      "evidence": [],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/mobile/libseat",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "校本部图书馆页面入口",
+      "evidence_level": "observed_request",
+      "observed_call_count": 1,
+      "resource_type_evidence": null,
+      "evidence": [
+        "校本部图书馆预约.har#69"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/mobile/seat2021",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "24H学习空间页面入口",
+      "evidence_level": "observed_request",
+      "observed_call_count": 1,
+      "resource_type_evidence": null,
+      "evidence": [
+        "24H学习空间预约.har#39"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/mobile/seat-mgr",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "延长智能中心页面入口",
+      "evidence_level": "observed_request",
+      "observed_call_count": 1,
+      "resource_type_evidence": null,
+      "evidence": [
+        "延长智能中心预约.har#67"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/mobile/csseat",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "科学与艺术中心页面入口",
+      "evidence_level": "observed_request",
+      "observed_call_count": 1,
+      "resource_type_evidence": null,
+      "evidence": [
+        "科学与艺术中心预约.har#64"
+      ],
+      "repository_evidence": []
+    },
+    {
+      "method": "GET",
+      "path": "/login",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "【JS 与项目来源】站点登录入口",
+      "evidence_level": "javascript_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        {
+          "path": "systems/there.shu.edu.cn/config.py",
+          "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+          "lines": 20
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/login-oauth2",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "【项目来源】本站 OAuth 入口与回调",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        {
+          "path": "systems/there.shu.edu.cn/config.py",
+          "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+          "lines": 20
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/web",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "summary": "【项目来源】登录后 Web 落地页",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/oauth/userLogin",
+      "servers": [
+        {
+          "url": "https://newsso.shu.edu.cn",
+          "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】密码认证",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L53",
+          "lines": 285,
+          "line": 53
+        },
+        {
+          "path": "src/entry_password.py",
+          "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py#L34",
+          "lines": 119,
+          "line": 34
+        },
+        {
+          "path": "src/utils.py",
+          "sha256": "cadae7db2a1a5c4a1a183d9b00c6278c0955b4d67c83df0c2374ccb9c123cc6c",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/utils.py#L16",
+          "lines": 71,
+          "line": 16
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/oauth/twoStep/send",
+      "servers": [
+        {
+          "url": "https://newsso.shu.edu.cn",
+          "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】发送二步验证码",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L75",
+          "lines": 285,
+          "line": 75
+        },
+        {
+          "path": "src/entry_password.py",
+          "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py#L49",
+          "lines": 119,
+          "line": 49
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/oauth/twoStep/verify",
+      "servers": [
+        {
+          "url": "https://newsso.shu.edu.cn",
+          "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】校验二步验证码",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L87",
+          "lines": 285,
+          "line": 87
+        },
+        {
+          "path": "src/entry_password.py",
+          "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py#L71",
+          "lines": 119,
+          "line": 71
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/authorize",
+      "servers": [
+        {
+          "url": "https://newsso.shu.edu.cn",
+          "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+        },
+        {
+          "url": "https://oauth.shu.edu.cn",
+          "description": "项目文档报告 there 浏览器授权入口使用此主机；host-scoped Cookie 不可据此自动跨主机复制"
+        }
+      ],
+      "summary": "【项目来源】向本站分配授权码",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/config.py",
+          "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+          "lines": 20
+        },
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L102",
+          "lines": 285,
+          "line": 102
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/oauth2/login/",
+      "servers": [
+        {
+          "url": "https://newsso.shu.edu.cn",
+          "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】SSO 登录页面及公钥引导",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/rsa_key.py",
+          "sha256": "ea823b6d0ee45ce63be4f3e82b1db2c00de9fe4d6955c812e7d42d34e421cd20",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/rsa_key.py#L61",
+          "lines": 117,
+          "line": 61
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L133",
+          "lines": 285,
+          "line": 133
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/wwopen/sso/qrConnect",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】企微扫码登录页面",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L179",
+          "lines": 285,
+          "line": 179
+        },
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L19",
+          "lines": 32,
+          "line": 19
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/wwopen/sso/l/qrConnect",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】等待扫码确认（POC GET/JSONP）",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L213",
+          "lines": 285,
+          "line": 213
+        },
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L23",
+          "lines": 32,
+          "line": 23
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/wwopen/sso/lp/qrConnect",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】浏览器扫码链的 POST 轮询",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L34",
+          "lines": 71,
+          "line": 34
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/wecom/qrcode",
+      "servers": [
+        {
+          "url": "https://newsso.shu.edu.cn",
+          "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+        }
+      ],
+      "summary": "【项目来源】企微确认码换 SSO 会话",
+      "evidence_level": "repo_reference",
+      "observed_call_count": 0,
+      "resource_type_evidence": null,
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L271",
+          "lines": 285,
+          "line": 271
+        },
+        {
+          "path": "README.md",
+          "sha256": "5744f9c1e57b76877774e7b102dc75f3fe81f48ed0a9fb13b47fc38d4ac222ba",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/README.md#L102",
+          "lines": 626,
+          "line": 102
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "repository": "https://github.com/preca-hoshino/shu-sso-poc",
+    "commit": "941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b",
+    "sources": [
+      {
+        "path": "systems/there.shu.edu.cn/README.md",
+        "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+        "lines": 71
+      },
+      {
+        "path": "systems/there.shu.edu.cn/config.py",
+        "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+        "lines": 20
+      },
+      {
+        "path": "src/client.py",
+        "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py",
+        "lines": 285
+      },
+      {
+        "path": "src/config.py",
+        "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py",
+        "lines": 32
+      },
+      {
+        "path": "src/runner.py",
+        "sha256": "4270b2e6b66b09a8b1efb1ef48615f5cf36639f567cfda4d1a0f61efaf80169c",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/runner.py",
+        "lines": 123
+      },
+      {
+        "path": "src/utils.py",
+        "sha256": "cadae7db2a1a5c4a1a183d9b00c6278c0955b4d67c83df0c2374ccb9c123cc6c",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/utils.py",
+        "lines": 71
+      },
+      {
+        "path": "src/entry_password.py",
+        "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py",
+        "lines": 119
+      },
+      {
+        "path": "src/rsa_key.py",
+        "sha256": "ea823b6d0ee45ce63be4f3e82b1db2c00de9fe4d6955c812e7d42d34e421cd20",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/rsa_key.py",
+        "lines": 117
+      },
+      {
+        "path": "README.md",
+        "sha256": "5744f9c1e57b76877774e7b102dc75f3fe81f48ed0a9fb13b47fc38d4ac222ba",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/README.md",
+        "lines": 626
+      }
+    ],
+    "public_there_client_profile": {
+      "client_id": "eDrd-M0i0WoSWRxk7ShDC1n-fbS7jRvi",
+      "redirect_uri": "https://there.shu.edu.cn/login-oauth2",
+      "scope": "1"
+    },
+    "login_bridge": [
+      {
+        "file": "24H学习空间预约.har",
+        "api_requests": 14,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 1,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "24H学习空间预约.har#1",
+          "24H学习空间预约.har#2",
+          "24H学习空间预约.har#9",
+          "24H学习空间预约.har#12",
+          "24H学习空间预约.har#13",
+          "24H学习空间预约.har#14",
+          "24H学习空间预约.har#15",
+          "24H学习空间预约.har#16",
+          "24H学习空间预约.har#21",
+          "24H学习空间预约.har#27",
+          "24H学习空间预约.har#35",
+          "24H学习空间预约.har#36",
+          "24H学习空间预约.har#37",
+          "24H学习空间预约.har#38"
+        ]
+      },
+      {
+        "file": "延长智能中心预约.har",
+        "api_requests": 18,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 2,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "延长智能中心预约.har#2",
+          "延长智能中心预约.har#3",
+          "延长智能中心预约.har#18",
+          "延长智能中心预约.har#20",
+          "延长智能中心预约.har#23",
+          "延长智能中心预约.har#25",
+          "延长智能中心预约.har#26",
+          "延长智能中心预约.har#27",
+          "延长智能中心预约.har#28",
+          "延长智能中心预约.har#32",
+          "延长智能中心预约.har#41",
+          "延长智能中心预约.har#42",
+          "延长智能中心预约.har#44",
+          "延长智能中心预约.har#45",
+          "延长智能中心预约.har#52",
+          "延长智能中心预约.har#53",
+          "延长智能中心预约.har#63",
+          "延长智能中心预约.har#64"
+        ]
+      },
+      {
+        "file": "校本部图书馆预约.har",
+        "api_requests": 31,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 4,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "校本部图书馆预约.har#4",
+          "校本部图书馆预约.har#5",
+          "校本部图书馆预约.har#12",
+          "校本部图书馆预约.har#14",
+          "校本部图书馆预约.har#17",
+          "校本部图书馆预约.har#19",
+          "校本部图书馆预约.har#20",
+          "校本部图书馆预约.har#21",
+          "校本部图书馆预约.har#22",
+          "校本部图书馆预约.har#26",
+          "校本部图书馆预约.har#27",
+          "校本部图书馆预约.har#29",
+          "校本部图书馆预约.har#30",
+          "校本部图书馆预约.har#31",
+          "校本部图书馆预约.har#33",
+          "校本部图书馆预约.har#34",
+          "校本部图书馆预约.har#35",
+          "校本部图书馆预约.har#37",
+          "校本部图书馆预约.har#38",
+          "校本部图书馆预约.har#39",
+          "校本部图书馆预约.har#40",
+          "校本部图书馆预约.har#41",
+          "校本部图书馆预约.har#47",
+          "校本部图书馆预约.har#53",
+          "校本部图书馆预约.har#54",
+          "校本部图书馆预约.har#55",
+          "校本部图书馆预约.har#56",
+          "校本部图书馆预约.har#57",
+          "校本部图书馆预约.har#66",
+          "校本部图书馆预约.har#67",
+          "校本部图书馆预约.har#68"
+        ]
+      },
+      {
+        "file": "科学与艺术中心预约.har",
+        "api_requests": 27,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 2,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "科学与艺术中心预约.har#2",
+          "科学与艺术中心预约.har#3",
+          "科学与艺术中心预约.har#17",
+          "科学与艺术中心预约.har#22",
+          "科学与艺术中心预约.har#23",
+          "科学与艺术中心预约.har#24",
+          "科学与艺术中心预约.har#25",
+          "科学与艺术中心预约.har#26",
+          "科学与艺术中心预约.har#27",
+          "科学与艺术中心预约.har#28",
+          "科学与艺术中心预约.har#29",
+          "科学与艺术中心预约.har#30",
+          "科学与艺术中心预约.har#31",
+          "科学与艺术中心预约.har#32",
+          "科学与艺术中心预约.har#33",
+          "科学与艺术中心预约.har#34",
+          "科学与艺术中心预约.har#35",
+          "科学与艺术中心预约.har#36",
+          "科学与艺术中心预约.har#38",
+          "科学与艺术中心预约.har#41",
+          "科学与艺术中心预约.har#42",
+          "科学与艺术中心预约.har#46",
+          "科学与艺术中心预约.har#47",
+          "科学与艺术中心预约.har#51",
+          "科学与艺术中心预约.har#60",
+          "科学与艺术中心预约.har#61",
+          "科学与艺术中心预约.har#62"
+        ]
+      }
+    ],
+    "workflow": {
+      "source_scope": "项目 primarily documents Web there login; connecting it to each mobile bootstrap is supported by shared site session and JS /login target, not a newly captured seamless end-to-end login trace",
+      "entry": {
+        "operationId": "openLoginPage",
+        "parameter": "from=web",
+        "documented_alternative": "handleThereOAuthCallback without code"
+      },
+      "authentication_alternatives": {
+        "password": {
+          "operations": [
+            "openSsoLoginPage",
+            "ssoPasswordLogin",
+            "ssoSendTwoStepCode",
+            "ssoVerifyTwoStepCode"
+          ],
+          "two_step_condition": "twoStepRequired=true",
+          "result_cookie": "SHU_OAUTH2"
+        },
+        "wecom": {
+          "operations": [
+            "wecomOpenLoginQr",
+            "wecomPollLoginQr",
+            "ssoRedeemWecomCode"
+          ],
+          "browser_transport_alternative": "wecomBrowserLoginQrPoll",
+          "result_cookie": "SHU_OAUTH2"
+        }
+      },
+      "authorization": {
+        "operationId": "ssoAuthorizeThere",
+        "client_profile": {
+          "client_id": "eDrd-M0i0WoSWRxk7ShDC1n-fbS7jRvi",
+          "redirect_uri": "https://there.shu.edu.cn/login-oauth2",
+          "scope": "1"
+        }
+      },
+      "site_session": {
+        "operationId": "handleThereOAuthCallback",
+        "cookie_names": [
+          "SPHYS_SESSION",
+          "authenticityToken"
+        ],
+        "landing_operation": "openThereWebLanding",
+        "spa_route": "/web/home"
+      },
+      "mobile_bridge": {
+        "observed_operations": [
+          "openLIBPage",
+          "openSTATIONPage",
+          "openSEATPage",
+          "openCSPage"
+        ],
+        "bootstrap_header_relation": "HTML.sessionId equals x-hys-session",
+        "site_cookie_utoken_relation": "90 captured requests include utoken, but it does not equal x-hys-session; signature not verified"
+      },
+      "reservation": {
+        "operations": [
+          "getCurrentProfile",
+          "getRecentBookings",
+          "getBookingOverview",
+          "listBookingAreas",
+          "getAreaBookingStatus",
+          "createBooking",
+          "getBookingDetail",
+          "cancelBooking",
+          "finishBooking"
+        ],
+        "business_success": "JSON.code=0 in captured samples"
+      },
+      "desktop_other_surface": {
+        "paths": [
+          "/api/v2.0/my-meetings",
+          "/api/v2.0/settings",
+          "/api/v2.0/my-stats"
+        ],
+        "schema": "unknown; not v3 bookings aliases"
+      }
+    },
+    "known_static_page_routes": [
+      {
+        "path": "/shu",
+        "source": {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        "role": "项目描述的静态介绍页面，不作为已登录成功标志，也不加入业务 API 列表"
+      },
+      {
+        "path": "/shu/booking.html",
+        "source": {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        "role": "项目描述的静态介绍页面，不作为已登录成功标志，也不加入业务 API 列表"
+      },
+      {
+        "path": "/shu/rule.html",
+        "source": {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        "role": "项目描述的静态介绍页面，不作为已登录成功标志，也不加入业务 API 列表"
+      }
+    ],
+    "source_review_only": true,
+    "code_executed": false,
+    "live_login_performed": false
+  },
+  "source_inventory": {
+    "javascript_asset_count": 29,
+    "http_call_sites": 61,
+    "javascript_call_inventory": [
+      {
+        "evidence": "24H学习空间预约.har#10",
+        "asset": "/static/station2023/js/5.7bc6e7af.js",
+        "offset": 9284,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "24H学习空间预约.har#10",
+        "asset": "/static/station2023/js/5.7bc6e7af.js",
+        "offset": 9589,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e+\"?showChecks=true\")}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var a=function useFinishBooking(){var e=Ob"
+      },
+      {
+        "evidence": "24H学习空间预约.har#10",
+        "asset": "/static/station2023/js/5.7bc6e7af.js",
+        "offset": 9883,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},s=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "24H学习空间预约.har#10",
+        "asset": "/static/station2023/js/5.7bc6e7af.js",
+        "offset": 10119,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"173\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var o=n(16"
+      },
+      {
+        "evidence": "24H学习空间预约.har#10",
+        "asset": "/static/station2023/js/5.7bc6e7af.js",
+        "offset": 10430,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"175\":function(e,t,n){},\"192\":function(e,t,n){\"use strict\";n.r(t),n.d(t,\"default\",(function(){return Suc"
+      },
+      {
+        "evidence": "24H学习空间预约.har#22",
+        "asset": "/static/station2023/js/6.3ace52c4.js",
+        "offset": 5156,
+        "fragment": "s.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "24H学习空间预约.har#22",
+        "asset": "/static/station2023/js/6.3ace52c4.js",
+        "offset": 5461,
+        "fragment": "s.a.get(\"/api/v3/bookings/\"+e+\"?showChecks=true\")}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var c=function useFinishBooking(){var e=Ob"
+      },
+      {
+        "evidence": "24H学习空间预约.har#22",
+        "asset": "/static/station2023/js/6.3ace52c4.js",
+        "offset": 5755,
+        "fragment": "s.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},r=function useCancelBooking(){var e=Object(a.useQueryClient)();return Object(a.useMutation)((fun"
+      },
+      {
+        "evidence": "24H学习空间预约.har#22",
+        "asset": "/static/station2023/js/6.3ace52c4.js",
+        "offset": 5991,
+        "fragment": "s.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"173\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var a=n(16"
+      },
+      {
+        "evidence": "24H学习空间预约.har#22",
+        "asset": "/static/station2023/js/6.3ace52c4.js",
+        "offset": 6302,
+        "fragment": "a.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"175\":function(e,t,n){},\"178\":function(e,t,n){\"use strict\";var a=n(1),s=(n(0),n(62)),i=n(34);t.a=functio"
+      },
+      {
+        "evidence": "24H学习空间预约.har#22",
+        "asset": "/static/station2023/js/6.3ace52c4.js",
+        "offset": 16278,
+        "fragment": "d.a.get(\"/api/v3/booking-status/areas/\"+e+\"?begin=\"+t+\"&end=\"+n)}),{\"keepPreviousData\":!0});return{\"bookingStatusAreaDetail\":a.data,\"isBookingStatusAreaDetailLoading\":a.isLoading,\"isBookingStatusAreaDetailError\":a.isErro"
+      },
+      {
+        "evidence": "24H学习空间预约.har#28",
+        "asset": "/static/station2023/js/4.2fcbc93f.js",
+        "offset": 10226,
+        "fragment": "v.a.get(\"/api/v3/booking-status/overview?day=\"+e)}),{\"keepPreviousData\":!1});return{\"bookingStatusOverview\":t.data,\"isLoading\":t.isLoading,\"isError\":t.isError}}(n).bookingStatusOverview,j=function useBookingStatusAreas(e"
+      },
+      {
+        "evidence": "24H学习空间预约.har#28",
+        "asset": "/static/station2023/js/4.2fcbc93f.js",
+        "offset": 10521,
+        "fragment": "v.a.get(\"/api/v3/booking-status/areas?begin=\"+e+\"&end=\"+t)}),{\"keepPreviousData\":!0});return{\"bookingStatusAreas\":n.data,\"isBookingStatusAreasLoading\":n.isLoading,\"isBookingStatusAreasError\":n.isError}}(n,n).bookingStatu"
+      },
+      {
+        "evidence": "延长智能中心预约.har#5",
+        "asset": "/static/seat-mgr/js/2.61917f6f.js",
+        "offset": 9282,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "延长智能中心预约.har#5",
+        "asset": "/static/seat-mgr/js/2.61917f6f.js",
+        "offset": 9587,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e)}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var a=function useFinishBooking(){var e=Object(o.useQueryClie"
+      },
+      {
+        "evidence": "延长智能中心预约.har#5",
+        "asset": "/static/seat-mgr/js/2.61917f6f.js",
+        "offset": 9862,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},c=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "延长智能中心预约.har#5",
+        "asset": "/static/seat-mgr/js/2.61917f6f.js",
+        "offset": 10098,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"171\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var o=n(16"
+      },
+      {
+        "evidence": "延长智能中心预约.har#5",
+        "asset": "/static/seat-mgr/js/2.61917f6f.js",
+        "offset": 10409,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"172\":function(e,t,n){\"use strict\";var o;n.d(t,\"a\",(function(){return o})),function(e){e.NOT_START=\"NOT_"
+      },
+      {
+        "evidence": "延长智能中心预约.har#14",
+        "asset": "/static/seat-mgr/js/3.63dd26d9.js",
+        "offset": 11131,
+        "fragment": "a.a.get(\"/api/v3/my/bookings/recent\");case 2:return e.abrupt(\"return\",e.sent);case 3:case\"end\":return e.stop()}}),_callee)}))),{\"keepPreviousData\":!1});return{\"myRecentBookings\":e.data,\"isLoading\":e.isLoading,\"isError\":e"
+      },
+      {
+        "evidence": "延长智能中心预约.har#21",
+        "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+        "offset": 9282,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "延长智能中心预约.har#21",
+        "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+        "offset": 9587,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e)}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var a=function useFinishBooking(){var e=Object(o.useQueryClie"
+      },
+      {
+        "evidence": "延长智能中心预约.har#21",
+        "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+        "offset": 9862,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},s=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "延长智能中心预约.har#21",
+        "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+        "offset": 10098,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"171\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var o=n(16"
+      },
+      {
+        "evidence": "延长智能中心预约.har#21",
+        "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+        "offset": 10409,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"173\":function(e,t,n){},\"189\":function(e,t,n){\"use strict\";n.r(t),n.d(t,\"default\",(function(){return Suc"
+      },
+      {
+        "evidence": "延长智能中心预约.har#35",
+        "asset": "/static/seat-mgr/js/6.05a10e80.js",
+        "offset": 5154,
+        "fragment": "s.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "延长智能中心预约.har#35",
+        "asset": "/static/seat-mgr/js/6.05a10e80.js",
+        "offset": 5459,
+        "fragment": "s.a.get(\"/api/v3/bookings/\"+e)}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var c=function useFinishBooking(){var e=Object(a.useQueryClie"
+      },
+      {
+        "evidence": "延长智能中心预约.har#35",
+        "asset": "/static/seat-mgr/js/6.05a10e80.js",
+        "offset": 5734,
+        "fragment": "s.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},r=function useCancelBooking(){var e=Object(a.useQueryClient)();return Object(a.useMutation)((fun"
+      },
+      {
+        "evidence": "延长智能中心预约.har#35",
+        "asset": "/static/seat-mgr/js/6.05a10e80.js",
+        "offset": 5970,
+        "fragment": "s.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"171\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var a=n(16"
+      },
+      {
+        "evidence": "延长智能中心预约.har#35",
+        "asset": "/static/seat-mgr/js/6.05a10e80.js",
+        "offset": 6281,
+        "fragment": "a.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"173\":function(e,t,n){},\"176\":function(e,t,n){\"use strict\";var a=n(1),s=(n(0),n(61)),i=n(34);t.a=functio"
+      },
+      {
+        "evidence": "延长智能中心预约.har#35",
+        "asset": "/static/seat-mgr/js/6.05a10e80.js",
+        "offset": 16304,
+        "fragment": "j.a.get(\"/api/v3/booking-status/areas/\"+e+\"?begin=\"+t+\"&end=\"+n)}),{\"keepPreviousData\":!0});return{\"bookingStatusAreaDetail\":a.data,\"isBookingStatusAreaDetailLoading\":a.isLoading,\"isBookingStatusAreaDetailError\":a.isErro"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#7",
+        "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+        "offset": 9425,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#7",
+        "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+        "offset": 9730,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e+\"?showChecks=true\")}),{\"keepPreviousData\":!0});return{\"bookingDetail\":n.data,\"isBookingDetailLoading\":n.isLoading,\"isBookingDetailError\":n.isError}}var c=function useFinishBooking(){var e=Ob"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#7",
+        "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+        "offset": 10024,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},a=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#7",
+        "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+        "offset": 10260,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},s=function useCheckInUseBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutatio"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#7",
+        "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+        "offset": 10503,
+        "fragment": "i.a.post(\"/api/v3/bookings/\"+e+\"/checkInUse\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"172\":function(e,n,t){\"use strict\";t.d(n,\"a\",(function(){return useCurrentUser}));var o=t("
+      },
+      {
+        "evidence": "校本部图书馆预约.har#7",
+        "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+        "offset": 10816,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"173\":function(e,n,t){\"use strict\";t.d(n,\"a\",(function(){return o}));var o=function(e){return e.NOT_STAR"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#15",
+        "asset": "/static/libseat2024/js/5.d4f56b16.js",
+        "offset": 9425,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#15",
+        "asset": "/static/libseat2024/js/5.d4f56b16.js",
+        "offset": 9730,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e+\"?showChecks=true\")}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var a=function useFinishBooking(){var e=Ob"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#15",
+        "asset": "/static/libseat2024/js/5.d4f56b16.js",
+        "offset": 10024,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},s=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#15",
+        "asset": "/static/libseat2024/js/5.d4f56b16.js",
+        "offset": 10260,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},c=function useCheckInUseBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutatio"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#15",
+        "asset": "/static/libseat2024/js/5.d4f56b16.js",
+        "offset": 10503,
+        "fragment": "i.a.post(\"/api/v3/bookings/\"+e+\"/checkInUse\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"172\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var o=n("
+      },
+      {
+        "evidence": "校本部图书馆预约.har#15",
+        "asset": "/static/libseat2024/js/5.d4f56b16.js",
+        "offset": 10816,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"174\":function(e,t,n){},\"190\":function(e,t,n){\"use strict\";n.r(t),n.d(t,\"default\",(function(){return Suc"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 5024,
+        "fragment": "s.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 5329,
+        "fragment": "s.a.get(\"/api/v3/bookings/\"+e+\"?showChecks=true\")}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var c=function useFinishBooking(){var e=Ob"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 5623,
+        "fragment": "s.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},r=function useCancelBooking(){var e=Object(a.useQueryClient)();return Object(a.useMutation)((fun"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 5859,
+        "fragment": "s.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},o=function useCheckInUseBooking(){var e=Object(a.useQueryClient)();return Object(a.useMutatio"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 6102,
+        "fragment": "s.a.post(\"/api/v3/bookings/\"+e+\"/checkInUse\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"172\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var a=n("
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 6415,
+        "fragment": "a.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"174\":function(e,t,n){},\"177\":function(e,t,n){\"use strict\";var a=n(1),s=(n(0),n(61)),i=n(40);t.a=functio"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#49",
+        "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+        "offset": 16217,
+        "fragment": "d.a.get(\"/api/v3/booking-status/areas/\"+e+\"?begin=\"+t+\"&end=\"+n)}),{\"keepPreviousData\":!0});return{\"bookingStatusAreaDetail\":a.data,\"isBookingStatusAreaDetailLoading\":a.isLoading,\"isBookingStatusAreaDetailError\":a.isErro"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#59",
+        "asset": "/static/libseat2024/js/4.27311a22.js",
+        "offset": 10333,
+        "fragment": "g.a.get(\"/api/v3/booking-status/overview?day=\"+e)}),{\"keepPreviousData\":!1});return{\"bookingStatusOverview\":t.data,\"isLoading\":t.isLoading,\"isError\":t.isError}}(n).bookingStatusOverview,y=function useBookingStatusAreas(e"
+      },
+      {
+        "evidence": "校本部图书馆预约.har#59",
+        "asset": "/static/libseat2024/js/4.27311a22.js",
+        "offset": 10628,
+        "fragment": "g.a.get(\"/api/v3/booking-status/areas?begin=\"+e+\"&end=\"+t)}),{\"keepPreviousData\":!0});return{\"bookingStatusAreas\":n.data,\"isBookingStatusAreasLoading\":n.isLoading,\"isBookingStatusAreasError\":n.isError}}(n,n).bookingStatu"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#5",
+        "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+        "offset": 9284,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#5",
+        "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+        "offset": 9589,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e)}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var a=function useFinishBooking(){var e=Object(o.useQueryClie"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#5",
+        "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+        "offset": 9864,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},c=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#5",
+        "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+        "offset": 10100,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"172\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var o=n(16"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#5",
+        "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+        "offset": 10411,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"173\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return o}));var o=function(e){return e.NOT_STAR"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#19",
+        "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+        "offset": 9284,
+        "fragment": "i.a.post(\"/api/v3/bookings\",e)}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\"),e.invalidateQueries(\"useBookingStatusAreaDetail\"),e.invalidateQueries(\"bookingStatusOverview\")}})};function us"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#19",
+        "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+        "offset": 9589,
+        "fragment": "i.a.get(\"/api/v3/bookings/\"+e)}),{\"keepPreviousData\":!0});return{\"bookingDetail\":t.data,\"isBookingDetailLoading\":t.isLoading,\"isBookingDetailError\":t.isError}}var a=function useFinishBooking(){var e=Object(o.useQueryClie"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#19",
+        "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+        "offset": 9864,
+        "fragment": "i.a.put(\"/api/v3/bookings/\"+e+\"/finish\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})},s=function useCancelBooking(){var e=Object(o.useQueryClient)();return Object(o.useMutation)((fun"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#19",
+        "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+        "offset": 10100,
+        "fragment": "i.a.delete(\"/api/v3/bookings/\"+e+\"/cancel\")}),{\"onSuccess\":function onSuccess(){e.invalidateQueries(\"useMyRecentBookings\")}})}},\"172\":function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return useCurrentUser}));var o=n(16"
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#19",
+        "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+        "offset": 10411,
+        "fragment": "o.a.get(\"/api/v3/my/profile\")}));return{\"currentUser\":e.data,\"isUserLoading\":e.isLoading,\"isUserError\":e.isError}}},\"174\":function(e,t,n){},\"189\":function(e,t,n){\"use strict\";n.r(t),n.d(t,\"default\",(function(){return Suc"
+      }
+    ],
+    "bootstrap_public_config": [
+      {
+        "evidence": "24H学习空间预约.har#39",
+        "keys": [
+          "language",
+          "lang",
+          "id",
+          "name",
+          "sex",
+          "sexLabel",
+          "nickName",
+          "headImgUrl",
+          "mobile",
+          "deptId",
+          "deptName",
+          "corpName",
+          "status",
+          "roles",
+          "appVersion",
+          "officeArea",
+          "abilities",
+          "mobilePlatform",
+          "meetingRoomTypes",
+          "roomTypeCustomForms",
+          "meetingRoomCount",
+          "corp"
+        ],
+        "meetingRoomTypes": [
+          {
+            "key": "ROOM",
+            "value": "空间"
+          },
+          {
+            "key": "SEAT",
+            "value": "工位",
+            "supportMap": true
+          },
+          {
+            "key": "SEAT2",
+            "value": "环化学院工位"
+          },
+          {
+            "key": "STATION",
+            "value": "24小时座位"
+          },
+          {
+            "key": "STATION2",
+            "value": "办公室工位"
+          },
+          {
+            "key": "LIB_SEAT",
+            "value": "图书馆自修区"
+          },
+          {
+            "key": "CS_SEAT",
+            "value": "交流展示中心"
+          }
+        ],
+        "roomTypeCustomForm_types": [
+          "ROOM",
+          "SEAT",
+          "SEAT2",
+          "STATION",
+          "STATION2",
+          "LIB_SEAT",
+          "CS_SEAT"
+        ],
+        "abilities": [
+          "fromUpstream"
+        ],
+        "host_config": {
+          "baseUrl": "https://there.shu.edu.cn",
+          "serviceHost": "https://there.shu.edu.cn",
+          "apiServiceHost": "https://there.shu.edu.cn/api/v2.0"
+        },
+        "otherConfig": {}
+      },
+      {
+        "evidence": "延长智能中心预约.har#67",
+        "keys": [
+          "language",
+          "lang",
+          "id",
+          "name",
+          "sex",
+          "sexLabel",
+          "nickName",
+          "headImgUrl",
+          "mobile",
+          "deptId",
+          "deptName",
+          "corpName",
+          "status",
+          "roles",
+          "appVersion",
+          "officeArea",
+          "abilities",
+          "mobilePlatform",
+          "meetingRoomTypes",
+          "roomTypeCustomForms",
+          "meetingRoomCount",
+          "corp"
+        ],
+        "meetingRoomTypes": [
+          {
+            "key": "ROOM",
+            "value": "空间"
+          },
+          {
+            "key": "SEAT",
+            "value": "工位",
+            "supportMap": true
+          },
+          {
+            "key": "SEAT2",
+            "value": "环化学院工位"
+          },
+          {
+            "key": "STATION",
+            "value": "24小时座位"
+          },
+          {
+            "key": "STATION2",
+            "value": "办公室工位"
+          },
+          {
+            "key": "LIB_SEAT",
+            "value": "图书馆自修区"
+          },
+          {
+            "key": "CS_SEAT",
+            "value": "交流展示中心"
+          }
+        ],
+        "roomTypeCustomForm_types": [
+          "ROOM",
+          "SEAT",
+          "SEAT2",
+          "STATION",
+          "STATION2",
+          "LIB_SEAT",
+          "CS_SEAT"
+        ],
+        "abilities": [
+          "fromUpstream"
+        ],
+        "host_config": {
+          "baseUrl": "https://there.shu.edu.cn",
+          "serviceHost": "https://there.shu.edu.cn",
+          "apiServiceHost": "https://there.shu.edu.cn/api/v2.0"
+        },
+        "otherConfig": {}
+      },
+      {
+        "evidence": "校本部图书馆预约.har#69",
+        "keys": [
+          "language",
+          "lang",
+          "id",
+          "name",
+          "sex",
+          "sexLabel",
+          "nickName",
+          "headImgUrl",
+          "mobile",
+          "deptId",
+          "deptName",
+          "corpName",
+          "status",
+          "roles",
+          "appVersion",
+          "officeArea",
+          "abilities",
+          "mobilePlatform",
+          "meetingRoomTypes",
+          "roomTypeCustomForms",
+          "meetingRoomCount",
+          "corp"
+        ],
+        "meetingRoomTypes": [
+          {
+            "key": "ROOM",
+            "value": "空间"
+          },
+          {
+            "key": "SEAT",
+            "value": "工位",
+            "supportMap": true
+          },
+          {
+            "key": "SEAT2",
+            "value": "环化学院工位"
+          },
+          {
+            "key": "STATION",
+            "value": "24小时座位"
+          },
+          {
+            "key": "STATION2",
+            "value": "办公室工位"
+          },
+          {
+            "key": "LIB_SEAT",
+            "value": "图书馆自修区"
+          },
+          {
+            "key": "CS_SEAT",
+            "value": "交流展示中心"
+          }
+        ],
+        "roomTypeCustomForm_types": [
+          "ROOM",
+          "SEAT",
+          "SEAT2",
+          "STATION",
+          "STATION2",
+          "LIB_SEAT",
+          "CS_SEAT"
+        ],
+        "abilities": [
+          "fromUpstream"
+        ],
+        "host_config": {
+          "baseUrl": "https://there.shu.edu.cn",
+          "serviceHost": "https://there.shu.edu.cn",
+          "apiServiceHost": "https://there.shu.edu.cn/api/v2.0"
+        },
+        "otherConfig": {}
+      },
+      {
+        "evidence": "科学与艺术中心预约.har#64",
+        "keys": [
+          "language",
+          "lang",
+          "id",
+          "name",
+          "sex",
+          "sexLabel",
+          "nickName",
+          "headImgUrl",
+          "mobile",
+          "deptId",
+          "deptName",
+          "corpName",
+          "status",
+          "roles",
+          "appVersion",
+          "officeArea",
+          "abilities",
+          "mobilePlatform",
+          "meetingRoomTypes",
+          "roomTypeCustomForms",
+          "meetingRoomCount",
+          "corp"
+        ],
+        "meetingRoomTypes": [
+          {
+            "key": "ROOM",
+            "value": "空间"
+          },
+          {
+            "key": "SEAT",
+            "value": "工位",
+            "supportMap": true
+          },
+          {
+            "key": "SEAT2",
+            "value": "环化学院工位"
+          },
+          {
+            "key": "STATION",
+            "value": "24小时座位"
+          },
+          {
+            "key": "STATION2",
+            "value": "办公室工位"
+          },
+          {
+            "key": "LIB_SEAT",
+            "value": "图书馆自修区"
+          },
+          {
+            "key": "CS_SEAT",
+            "value": "交流展示中心"
+          }
+        ],
+        "roomTypeCustomForm_types": [
+          "ROOM",
+          "SEAT",
+          "SEAT2",
+          "STATION",
+          "STATION2",
+          "LIB_SEAT",
+          "CS_SEAT"
+        ],
+        "abilities": [
+          "fromUpstream"
+        ],
+        "host_config": {
+          "baseUrl": "https://there.shu.edu.cn",
+          "serviceHost": "https://there.shu.edu.cn",
+          "apiServiceHost": "https://there.shu.edu.cn/api/v2.0"
+        },
+        "otherConfig": {}
+      }
+    ]
+  },
+  "not_promoted": [
+    {
+      "source": "HTML capabilities and configuration",
+      "known": "存在编辑、成员、评论、分享、固定预约或代预约等能力/配置字段。",
+      "contract": "没有直接方法与路径证据的功能不列为接口。"
+    },
+    {
+      "source": "legacy apiServiceHost default",
+      "known": "脚本默认值包含 hyshi.bayrand.com/api/v2.0。",
+      "contract": "不是本次 there 实际业务请求的服务器地址。"
+    },
+    {
+      "source": "repository OAuth description",
+      "known": "项目描述后端换 token。",
+      "contract": "后端实际交换请求、client secret 与完整载荷未提供。"
+    }
+  ],
+  "known_url_references": [
+    {
+      "path": "/api/v2.0/my-meetings",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目文档列出路径，HTTP 方法、参数和返回体未提供。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L44",
+          "lines": 71,
+          "line": 44
+        }
+      ]
+    },
+    {
+      "path": "/api/v2.0/settings",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目文档列出路径，HTTP 方法、参数和返回体未提供。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L44",
+          "lines": 71,
+          "line": 44
+        }
+      ]
+    },
+    {
+      "path": "/api/v2.0/my-stats",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目文档列出路径，HTTP 方法、参数和返回体未提供。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L44",
+          "lines": 71,
+          "line": 44
+        }
+      ]
+    },
+    {
+      "path": "/api/room/qrcode/meeting/{bookingId}.png",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "response_url",
+      "note": "预约详情返回 qrCodeUrl，仅确认 URL。",
+      "evidence": [
+        {
+          "source": "校本部图书馆预约.har#12",
+          "field": "data.qrCodeUrl"
+        },
+        {
+          "source": "24H学习空间预约.har#9",
+          "field": "data.qrCodeUrl"
+        },
+        {
+          "source": "延长智能中心预约.har#18",
+          "field": "data.qrCodeUrl"
+        },
+        {
+          "source": "科学与艺术中心预约.har#17",
+          "field": "data.qrCodeUrl"
+        }
+      ],
+      "repository_evidence": []
+    },
+    {
+      "path": "/m/b/{bookingId}/c/{checkinToken}",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "response_url",
+      "note": "预约详情返回 qrCodeValue，仅确认 URL。",
+      "evidence": [
+        {
+          "source": "校本部图书馆预约.har#12",
+          "field": "data.qrCodeValue"
+        },
+        {
+          "source": "24H学习空间预约.har#9",
+          "field": "data.qrCodeValue"
+        },
+        {
+          "source": "延长智能中心预约.har#18",
+          "field": "data.qrCodeValue"
+        },
+        {
+          "source": "科学与艺术中心预约.har#17",
+          "field": "data.qrCodeValue"
+        }
+      ],
+      "repository_evidence": []
+    },
+    {
+      "path": "/wwopen/sso/qrImg",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目代码构造 qr_img_url，没有对应请求调用。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L20",
+          "lines": 32,
+          "line": 20
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L195",
+          "lines": 285,
+          "line": 195
+        }
+      ]
+    },
+    {
+      "path": "/wwopen/sso/confirm2",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目代码构造 confirm_url，没有对应请求调用。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L21",
+          "lines": 32,
+          "line": 21
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L195",
+          "lines": 285,
+          "line": 195
+        }
+      ]
+    }
+  ]
+}

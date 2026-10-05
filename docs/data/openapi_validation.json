@@ -1,0 +1,30 @@
+{
+  "format": "OpenAPI 3.1.1",
+  "specification_validation": [
+    "there.openapi.json",
+    "there.openapi.yaml",
+    "there.openapi.evidence-only.json",
+    "there.openapi.evidence-only.yaml"
+  ],
+  "json_yaml_equivalence": [
+    "there.openapi",
+    "there.openapi.evidence-only"
+  ],
+  "reference_count": 224,
+  "operation_ids_unique": true,
+  "captured_responses_validated": 90,
+  "captured_requests_validated": 8,
+  "documented_response_examples_validated": 15,
+  "documented_request_examples_validated": 4,
+  "source_hashes_verified": 4,
+  "domain_requests_performed": 0,
+  "method": "offline structural validation and local schema matching; unexecuted source references are not runtime verification",
+  "result": "passed",
+  "operation_counts": {
+    "observed_request": 13,
+    "javascript_reference": 2,
+    "repo_reference": 11
+  },
+  "repository_source_hashes_verified": 9,
+  "source_review_only_operations": 11
+}

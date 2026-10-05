@@ -1,0 +1,8 @@
+# ---- 主脚本 poc.py（四入口座位预约）----
+requests>=2.32
+
+# ---- 登录脚本 login.py（SSO，与 shu-sso-poc 一致）----
+cryptography>=43
+
+# 可选：终端渲染企微二维码（未安装时显示二维码 URL）
+qrcode>=8.0

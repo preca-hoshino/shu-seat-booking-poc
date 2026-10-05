@@ -1,0 +1,5761 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "there.shu.edu.cn 四入口预约与登录 API",
+    "version": "1.0.0-evidence",
+    "description": "四个 HAR 及 shu-sso-poc 固定提交的离线整理。只收录 HAR 实际请求、脚本直接调用或项目明确记载方法的操作。包含 9 个实测业务 API、4 个实测移动页面及有源码出处的登录和签到操作。只知道 URL 而不知道方法的 7 个条目保存在 x-url-references，不作为 HTTP 操作。请求字段必填性和未捕获响应保持未知；security 描述成功样本携带组合。所有个人信息与会话值已脱敏，生成期间没有访问目标或登录服务。"
+  },
+  "servers": [
+    {
+      "url": "https://there.shu.edu.cn",
+      "description": "HAR 中实际使用的主机；生成期间没有访问"
+    }
+  ],
+  "tags": [
+    {
+      "name": "用户与预约列表"
+    },
+    {
+      "name": "区域与可用性"
+    },
+    {
+      "name": "预约操作"
+    },
+    {
+      "name": "签到与二维码"
+    },
+    {
+      "name": "页面与登录"
+    },
+    {
+      "name": "共享 SSO 协议",
+      "description": "来自用户指定项目的文档/实现；没有在本次 HAR 中捕获或进行在线复核。"
+    },
+    {
+      "name": "企业微信登录",
+      "description": "来自用户指定项目的文档/实现；没有在本次 HAR 中捕获或进行在线复核。"
+    },
+    {
+      "name": "桌面端 v2 API",
+      "description": "来自用户指定项目的文档/实现；没有在本次 HAR 中捕获或进行在线复核。"
+    }
+  ],
+  "paths": {
+    "/api/v3/my/profile": {
+      "get": {
+        "operationId": "getCurrentProfile",
+        "tags": [
+          "用户与预约列表"
+        ],
+        "summary": "当前用户",
+        "description": "初始化用户；创建请求的 subject 和 meetingMembers 分别来自 data.name、data.id。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#68",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "isAnonymous": false,
+                        "disableBooking": false,
+                        "isAdmin": false,
+                        "id": "<profile.data.id>",
+                        "name": "<profile.data.name>",
+                        "mobile": "<redacted>"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 4,
+        "x-evidence": [
+          "校本部图书馆预约.har#68",
+          "24H学习空间预约.har#36",
+          "延长智能中心预约.har#63",
+          "科学与艺术中心预约.har#62"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#10",
+            "asset": "/static/station2023/js/5.7bc6e7af.js",
+            "offset": 10430
+          },
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 6302
+          },
+          {
+            "source": "延长智能中心预约.har#5",
+            "asset": "/static/seat-mgr/js/2.61917f6f.js",
+            "offset": 10409
+          },
+          {
+            "source": "延长智能中心预约.har#21",
+            "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+            "offset": 10409
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 6281
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 10816
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 10816
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 6415
+          },
+          {
+            "source": "科学与艺术中心预约.har#5",
+            "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+            "offset": 10411
+          },
+          {
+            "source": "科学与艺术中心预约.har#19",
+            "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+            "offset": 10411
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/my/bookings/recent": {
+      "get": {
+        "operationId": "getRecentBookings",
+        "tags": [
+          "用户与预约列表"
+        ],
+        "summary": "最近预约",
+        "description": "初始、创建后、取消或结束后刷新；列表含已取消记录，不能把非空列表直接当作当前有效预约。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecentBookingsResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#66",
+                    "value": {
+                      "code": 0,
+                      "data": []
+                    }
+                  },
+                  "sample2": {
+                    "summary": "校本部图书馆预约.har#17",
+                    "value": {
+                      "code": 0,
+                      "data": [
+                        {
+                          "id": "BOOKING_LIB",
+                          "roomId": "2RLARqe9egAFzej4ALBizj",
+                          "roomName": "2E015",
+                          "officeAreaId": "KRdcGiyK99gzrqCepi91Cv",
+                          "officeAreaName": "二楼东侧",
+                          "roomType": "LIB_SEAT",
+                          "beginTime": "2026-10-03 08:30:00",
+                          "endTime": "2026-10-03 09:30:00",
+                          "duration": 60,
+                          "status": "OPEN",
+                          "statusLabel": "正常",
+                          "needCheckin": true,
+                          "checkedStatus": "N",
+                          "abilities": [
+                            "cancel",
+                            "edit",
+                            "edit-member",
+                            "set-not-public",
+                            "waitOpen"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 16,
+        "x-evidence": [
+          "校本部图书馆预约.har#66",
+          "校本部图书馆预约.har#38",
+          "校本部图书馆预约.har#33",
+          "校本部图书馆预约.har#17",
+          "校本部图书馆预约.har#4",
+          "24H学习空间预约.har#35",
+          "24H学习空间预约.har#13",
+          "24H学习空间预约.har#1",
+          "延长智能中心预约.har#64",
+          "延长智能中心预约.har#25",
+          "延长智能中心预约.har#2",
+          "科学与艺术中心预约.har#60",
+          "科学与艺术中心预约.har#33",
+          "科学与艺术中心预约.har#27",
+          "科学与艺术中心预约.har#24",
+          "科学与艺术中心预约.har#2"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "延长智能中心预约.har#14",
+            "asset": "/static/seat-mgr/js/3.63dd26d9.js",
+            "offset": 11131
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/booking-status/overview": {
+      "get": {
+        "operationId": "getBookingOverview",
+        "tags": [
+          "区域与可用性"
+        ],
+        "summary": "日期概览",
+        "description": "提供日期概览；overview 的通用配置可与实际区域配置不同。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/Day"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#67",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "currentOfficeArea": {
+                          "id": "all",
+                          "name": "所有区域",
+                          "shortName": "所有区域",
+                          "supportRoomTypes": [
+                            "ROOM"
+                          ],
+                          "abilities": []
+                        },
+                        "bookingDays_count": 30,
+                        "bookingTimes": {
+                          "timeBlockType": "FIXED_BLOCK",
+                          "startHour": 9,
+                          "endHour": 18,
+                          "morningEndHour": 12,
+                          "afternoonStartHour": 12,
+                          "maxDuration": 480,
+                          "configMaxDuration": 480,
+                          "meetingInterval": 15,
+                          "bookingLimitDays": 365,
+                          "needCheckin": true,
+                          "disablePersonConflict": false,
+                          "enableFixedBooking": false,
+                          "enableAgentBooking": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 20,
+        "x-evidence": [
+          "校本部图书馆预约.har#67",
+          "校本部图书馆预约.har#56",
+          "校本部图书馆预约.har#53",
+          "校本部图书馆预约.har#35",
+          "校本部图书馆预约.har#31",
+          "校本部图书馆预约.har#29",
+          "校本部图书馆预约.har#27",
+          "校本部图书馆预约.har#14",
+          "24H学习空间预约.har#27",
+          "24H学习空间预约.har#37",
+          "延长智能中心预约.har#53",
+          "延长智能中心预约.har#44",
+          "延长智能中心预约.har#41",
+          "延长智能中心预约.har#23",
+          "科学与艺术中心预约.har#51",
+          "科学与艺术中心预约.har#47",
+          "科学与艺术中心预约.har#42",
+          "科学与艺术中心预约.har#30",
+          "科学与艺术中心预约.har#32",
+          "科学与艺术中心预约.har#23"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#28",
+            "asset": "/static/station2023/js/4.2fcbc93f.js",
+            "offset": 10226
+          },
+          {
+            "source": "校本部图书馆预约.har#59",
+            "asset": "/static/libseat2024/js/4.27311a22.js",
+            "offset": 10333
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/booking-status/areas": {
+      "get": {
+        "operationId": "listBookingAreas",
+        "tags": [
+          "区域与可用性"
+        ],
+        "summary": "区域列表",
+        "description": "取得区域树。目录节点和可选区域均可能使用 level=FLOOR，不能只靠 level 判断叶节点。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/Begin"
+          },
+          {
+            "$ref": "#/components/parameters/End"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreasResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#57",
+                    "value": {
+                      "code": 0,
+                      "data": [
+                        {
+                          "id": "CvT5k6Aivz2riLTRTq2FxM",
+                          "name": "校本部图书馆自修区",
+                          "level": "FLOOR",
+                          "supportRoomTypes": [
+                            "LIB_SEAT"
+                          ]
+                        },
+                        {
+                          "id": "KRdcGiyK99gzrqCepi91Cv",
+                          "name": "二楼东侧",
+                          "level": "FLOOR",
+                          "parentId": "CvT5k6Aivz2riLTRTq2FxM",
+                          "parentName": "校本部图书馆自修区",
+                          "supportRoomTypes": [
+                            "LIB_SEAT"
+                          ]
+                        },
+                        {
+                          "id": "8DWVvvMnMn6Kvg9qCbNPdi",
+                          "name": "二楼西侧",
+                          "level": "FLOOR",
+                          "parentId": "CvT5k6Aivz2riLTRTq2FxM",
+                          "parentName": "校本部图书馆自修区",
+                          "supportRoomTypes": [
+                            "LIB_SEAT"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 10,
+        "x-evidence": [
+          "校本部图书馆预约.har#57",
+          "校本部图书馆预约.har#55",
+          "校本部图书馆预约.har#54",
+          "24H学习空间预约.har#38",
+          "延长智能中心预约.har#52",
+          "延长智能中心预约.har#45",
+          "延长智能中心预约.har#42",
+          "科学与艺术中心预约.har#61",
+          "科学与艺术中心预约.har#46",
+          "科学与艺术中心预约.har#41"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 16278
+          },
+          {
+            "source": "24H学习空间预约.har#28",
+            "asset": "/static/station2023/js/4.2fcbc93f.js",
+            "offset": 10521
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 16304
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 16217
+          },
+          {
+            "source": "校本部图书馆预约.har#59",
+            "asset": "/static/libseat2024/js/4.27311a22.js",
+            "offset": 10628
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/booking-status/areas/{areaId}": {
+      "get": {
+        "operationId": "getAreaBookingStatus",
+        "tags": [
+          "区域与可用性"
+        ],
+        "summary": "区域座位与规则",
+        "description": "rooms[].id 用于预约；rooms[].officeAreaId 对应该区域。查询指定时间区间后选择未禁用且可预约的座位。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/AreaId"
+          },
+          {
+            "$ref": "#/components/parameters/Begin"
+          },
+          {
+            "$ref": "#/components/parameters/End"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaDetailResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#47",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "id": "KRdcGiyK99gzrqCepi91Cv",
+                        "name": "二楼东侧",
+                        "path": [
+                          {
+                            "id": "CvT5k6Aivz2riLTRTq2FxM",
+                            "name": "校本部图书馆自修区"
+                          },
+                          {
+                            "id": "KRdcGiyK99gzrqCepi91Cv",
+                            "name": "二楼东侧"
+                          }
+                        ],
+                        "totalResourceCount": 268,
+                        "bookedResourceCount": 0,
+                        "bookableResourceCount": 268,
+                        "bookingDays": [
+                          "2026-10-04",
+                          "2026-10-05"
+                        ],
+                        "bookingTimes": {
+                          "timeBlockType": "FIXED_BLOCK",
+                          "supportAcrossDayBooking": false,
+                          "suggestStartTime": "08:00",
+                          "suggestEndTime": "09:00",
+                          "startHour": 8,
+                          "endHour": 22,
+                          "morningEndHour": 12,
+                          "afternoonStartHour": 12,
+                          "maxDuration": 480,
+                          "minDuration": 30,
+                          "configMaxDuration": 480,
+                          "meetingInterval": 30,
+                          "bookingLimitDays": 1,
+                          "needCheckin": true,
+                          "disablePersonConflict": false,
+                          "enableFixedBooking": false,
+                          "enableAgentBooking": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 24,
+        "x-evidence": [
+          "校本部图书馆预约.har#47",
+          "校本部图书馆预约.har#41",
+          "校本部图书馆预约.har#40",
+          "校本部图书馆预约.har#37",
+          "校本部图书馆预约.har#30",
+          "校本部图书馆预约.har#26",
+          "校本部图书馆预约.har#22",
+          "校本部图书馆预约.har#21",
+          "校本部图书馆预约.har#19",
+          "24H学习空间预约.har#21",
+          "24H学习空间预约.har#16",
+          "24H学习空间预约.har#15",
+          "24H学习空间预约.har#12",
+          "延长智能中心预约.har#32",
+          "延长智能中心预约.har#28",
+          "延长智能中心预约.har#27",
+          "延长智能中心预约.har#20",
+          "科学与艺术中心预约.har#38",
+          "科学与艺术中心预约.har#36",
+          "科学与艺术中心预约.har#35",
+          "科学与艺术中心预约.har#31",
+          "科学与艺术中心预约.har#29",
+          "科学与艺术中心预约.har#26",
+          "科学与艺术中心预约.har#22"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 16278
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 16304
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 16217
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/bookings": {
+      "post": {
+        "operationId": "createBooking",
+        "tags": [
+          "预约操作"
+        ],
+        "summary": "创建预约",
+        "description": "抓包共 8 次：4 次成功、4 次业务拒绝；HTTP 均为 200。rooms 传入完整座位对象，未验证可缩减为仅 id。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBookingResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#39",
+                    "value": {
+                      "code": 200,
+                      "warnMessage": "不能预订超过2天的预订"
+                    }
+                  },
+                  "sample2": {
+                    "summary": "校本部图书馆预约.har#34",
+                    "value": {
+                      "code": 200,
+                      "warnMessage": "同一用户10秒只能提交一次",
+                      "message": "同一用户10秒只能提交一次"
+                    }
+                  },
+                  "sample3": {
+                    "summary": "校本部图书馆预约.har#20",
+                    "value": {
+                      "code": 0,
+                      "noticeMessage": "创建预订成功",
+                      "data": [
+                        {
+                          "id": "BOOKING_LIB",
+                          "subject": "<profile.data.name>",
+                          "templateType": "",
+                          "beforeNotify": false,
+                          "abilities": []
+                        }
+                      ]
+                    }
+                  },
+                  "sample4": {
+                    "summary": "科学与艺术中心预约.har#34",
+                    "value": {
+                      "code": 200,
+                      "warnMessage": "不能预订超过8小时的meetingtype.cs_seat"
+                    }
+                  },
+                  "sample5": {
+                    "summary": "科学与艺术中心预约.har#25",
+                    "value": {
+                      "code": 0,
+                      "noticeMessage": "创建meetingType.CS_SEAT成功",
+                      "data": [
+                        {
+                          "id": "BOOKING_CS",
+                          "subject": "<profile.data.name>",
+                          "templateType": "",
+                          "beforeNotify": false,
+                          "abilities": []
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "links": {
+              "detailAfterSuccess": {
+                "operationId": "getBookingDetail",
+                "parameters": {
+                  "bookingId": "$response.body#/data/0/id"
+                },
+                "description": "仅在 code=0 且 data[0].id 存在时使用；业务拒绝不产生预约 ID。"
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 8,
+        "x-evidence": [
+          "校本部图书馆预约.har#39",
+          "校本部图书馆预约.har#34",
+          "校本部图书馆预约.har#20",
+          "24H学习空间预约.har#14",
+          "延长智能中心预约.har#26",
+          "科学与艺术中心预约.har#34",
+          "科学与艺术中心预约.har#28",
+          "科学与艺术中心预约.har#25"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#10",
+            "asset": "/static/station2023/js/5.7bc6e7af.js",
+            "offset": 9284
+          },
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 5156
+          },
+          {
+            "source": "延长智能中心预约.har#5",
+            "asset": "/static/seat-mgr/js/2.61917f6f.js",
+            "offset": 9282
+          },
+          {
+            "source": "延长智能中心预约.har#21",
+            "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+            "offset": 9282
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 5154
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 9425
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 10503
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 9425
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 10503
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 5024
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 6102
+          },
+          {
+            "source": "科学与艺术中心预约.har#5",
+            "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+            "offset": 9284
+          },
+          {
+            "source": "科学与艺术中心预约.har#19",
+            "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+            "offset": 9284
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json",
+        "requestBody": {
+          "required": false,
+          "description": "8 次均传入 body；是否可删字段未验证，不作为最小契约。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingCreateRequest"
+              },
+              "examples": {
+                "LIB": {
+                  "summary": "校本部图书馆 已捕获的单座位单时段",
+                  "value": {
+                    "rooms": [
+                      {
+                        "id": "2RLARqe9egAFzej4ALBizj",
+                        "name": "2E015",
+                        "officeAreaId": "KRdcGiyK99gzrqCepi91Cv",
+                        "disabled": false,
+                        "showOrder": 15,
+                        "isBusy": false,
+                        "isBooked": false,
+                        "abilities": [
+                          "booking"
+                        ]
+                      }
+                    ],
+                    "times": [
+                      {
+                        "startDate": "2026-10-03",
+                        "startTime": "08:30",
+                        "endDate": "2026-10-03",
+                        "endTime": "09:30"
+                      }
+                    ],
+                    "subject": "<profile.data.name>",
+                    "meetingMembers": [
+                      "<profile.data.id>"
+                    ]
+                  }
+                },
+                "STATION": {
+                  "summary": "24H学习空间 已捕获的单座位单时段",
+                  "value": {
+                    "rooms": [
+                      {
+                        "id": "4q4z61HkGbJZnK89ejv9wU",
+                        "name": "B-034",
+                        "officeAreaId": "DsNjTXf8icSMh3SXB5HPge",
+                        "disabled": false,
+                        "showOrder": 34,
+                        "isBusy": false,
+                        "isBooked": false,
+                        "abilities": [
+                          "booking"
+                        ]
+                      }
+                    ],
+                    "times": [
+                      {
+                        "startDate": "2026-10-03",
+                        "startTime": "00:30",
+                        "endDate": "2026-10-03",
+                        "endTime": "01:30"
+                      }
+                    ],
+                    "subject": "<profile.data.name>",
+                    "meetingMembers": [
+                      "<profile.data.id>"
+                    ]
+                  }
+                },
+                "SEAT": {
+                  "summary": "延长智能中心 已捕获的单座位单时段",
+                  "value": {
+                    "rooms": [
+                      {
+                        "id": "FLiAcmbCuHCEkRu5SH1rhX",
+                        "name": "11-3",
+                        "officeAreaId": "KbuCBLACKv74KmiBqE51z6",
+                        "disabled": false,
+                        "showOrder": 32,
+                        "isBusy": false,
+                        "isBooked": false,
+                        "abilities": [
+                          "booking"
+                        ]
+                      }
+                    ],
+                    "times": [
+                      {
+                        "startDate": "2026-10-03",
+                        "startTime": "09:30",
+                        "endDate": "2026-10-03",
+                        "endTime": "10:30"
+                      }
+                    ],
+                    "subject": "<profile.data.name>",
+                    "meetingMembers": [
+                      "<profile.data.id>"
+                    ]
+                  }
+                },
+                "CS": {
+                  "summary": "科学与艺术中心 已捕获的单座位单时段",
+                  "value": {
+                    "rooms": [
+                      {
+                        "id": "ECsWTCtuEoMSq9DqD8ZAPV",
+                        "name": "A-27",
+                        "officeAreaId": "VQyeEokNwJnq7h8sVwmnfg",
+                        "disabled": false,
+                        "showOrder": 28,
+                        "isBusy": false,
+                        "isBooked": false,
+                        "abilities": [
+                          "booking"
+                        ]
+                      }
+                    ],
+                    "times": [
+                      {
+                        "startDate": "2026-10-03",
+                        "startTime": "09:00",
+                        "endDate": "2026-10-03",
+                        "endTime": "14:00"
+                      }
+                    ],
+                    "subject": "<profile.data.name>",
+                    "meetingMembers": [
+                      "<profile.data.id>"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "x-observed-present": true,
+          "x-requiredness": "unverified"
+        }
+      }
+    },
+    "/api/v3/bookings/{bookingId}": {
+      "get": {
+        "operationId": "getBookingDetail",
+        "tags": [
+          "预约操作"
+        ],
+        "summary": "预约详情",
+        "description": "最终预约时间以此接口和 recent 返回值为准；abilities 用于判断可执行操作。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/BookingId"
+          },
+          {
+            "$ref": "#/components/parameters/ShowChecks"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDetailResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#12",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "id": "BOOKING_LIB",
+                        "success": true,
+                        "beginTime": "2026-10-03 08:30:00",
+                        "endTime": "2026-10-03 09:30:00",
+                        "duration": 60,
+                        "roomId": "2RLARqe9egAFzej4ALBizj",
+                        "roomName": "2E015",
+                        "officeAreaId": "KRdcGiyK99gzrqCepi91Cv",
+                        "officeAreaName": "二楼东侧",
+                        "roomType": "LIB_SEAT",
+                        "status": "OPEN",
+                        "statusLabel": "正常",
+                        "needCheckin": true,
+                        "joinStatus": "Y",
+                        "checkinStatus": "N",
+                        "checkedStatus": "N",
+                        "abilities": [
+                          "cancel",
+                          "comment",
+                          "edit",
+                          "edit-member",
+                          "set-not-public",
+                          "share",
+                          "view",
+                          "waitOpen"
+                        ],
+                        "checkins": [],
+                        "nowAvailableDelayMinutes": 483,
+                        "qrCodeUrl": "/api/room/qrcode/meeting/{bookingId}.png?ts={ts}",
+                        "qrCodeValue": "/m/b/{bookingId}/c/{checkinToken}?corpAppId={corpAppId}"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 4,
+        "x-evidence": [
+          "校本部图书馆预约.har#12",
+          "24H学习空间预约.har#9",
+          "延长智能中心预约.har#18",
+          "科学与艺术中心预约.har#17"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#10",
+            "asset": "/static/station2023/js/5.7bc6e7af.js",
+            "offset": 9589
+          },
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 5461
+          },
+          {
+            "source": "延长智能中心预约.har#5",
+            "asset": "/static/seat-mgr/js/2.61917f6f.js",
+            "offset": 9587
+          },
+          {
+            "source": "延长智能中心预约.har#21",
+            "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+            "offset": 9587
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 5459
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 9730
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 9730
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 5329
+          },
+          {
+            "source": "科学与艺术中心预约.har#5",
+            "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+            "offset": 9589
+          },
+          {
+            "source": "科学与艺术中心预约.har#19",
+            "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+            "offset": 9589
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/bookings/{bookingId}/cancel": {
+      "delete": {
+        "operationId": "cancelBooking",
+        "tags": [
+          "预约操作"
+        ],
+        "summary": "取消预约",
+        "description": "图书馆、延长、科艺三段实际调用；随后 recent 的该预约为 CANCEL，abilities 为空。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/BookingId"
+          },
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelBookingResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "校本部图书馆预约.har#5",
+                    "value": {
+                      "code": 0,
+                      "noticeMessage": "取消预订成功",
+                      "data": {
+                        "success": true,
+                        "templateType": "",
+                        "beforeNotify": false,
+                        "abilities": []
+                      }
+                    }
+                  },
+                  "sample2": {
+                    "summary": "科学与艺术中心预约.har#3",
+                    "value": {
+                      "code": 0,
+                      "noticeMessage": "取消meetingType.CS_SEAT成功",
+                      "data": {
+                        "success": true,
+                        "templateType": "",
+                        "beforeNotify": false,
+                        "abilities": []
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 3,
+        "x-evidence": [
+          "校本部图书馆预约.har#5",
+          "延长智能中心预约.har#3",
+          "科学与艺术中心预约.har#3"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#10",
+            "asset": "/static/station2023/js/5.7bc6e7af.js",
+            "offset": 10119
+          },
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 5991
+          },
+          {
+            "source": "延长智能中心预约.har#5",
+            "asset": "/static/seat-mgr/js/2.61917f6f.js",
+            "offset": 10098
+          },
+          {
+            "source": "延长智能中心预约.har#21",
+            "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+            "offset": 10098
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 5970
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 10260
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 10260
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 5859
+          },
+          {
+            "source": "科学与艺术中心预约.har#5",
+            "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+            "offset": 10100
+          },
+          {
+            "source": "科学与艺术中心预约.har#19",
+            "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+            "offset": 10100
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "observed_request",
+          "SEAT2": "not_observed",
+          "STATION": "javascript_reference",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/bookings/{bookingId}/finish": {
+      "put": {
+        "operationId": "finishBooking",
+        "tags": [
+          "预约操作"
+        ],
+        "summary": "提前结束预约",
+        "description": "24H 实际调用；详情此前有 close 能力。最终 recent 为 CANCEL，duration=0，origEndAt 保留原结束时间。 参数和响应为样本结构；未声称 required 或服务器全部行为。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/BookingId"
+          },
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTTP 200；业务结果需检查 JSON code。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinishBookingResponse"
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "24H学习空间预约.har#2",
+                    "value": {
+                      "code": 0,
+                      "noticeMessage": "提前结束预订成功",
+                      "message": "提前结束预订成功"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端将此 HTTP 状态视为需要登录并导航到 /login。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "403": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示没有权限访问。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "404": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示请求资源不存在。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          },
+          "502": {
+            "description": "仅有 JS 错误处理分支，未捕获此响应。公共客户端提示服务端出现问题。",
+            "x-evidence-level": "javascript_reference",
+            "x-body-schema": "unknown"
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 1,
+        "x-evidence": [
+          "24H学习空间预约.har#2"
+        ],
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#10",
+            "asset": "/static/station2023/js/5.7bc6e7af.js",
+            "offset": 9883
+          },
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "offset": 5755
+          },
+          {
+            "source": "延长智能中心预约.har#5",
+            "asset": "/static/seat-mgr/js/2.61917f6f.js",
+            "offset": 9862
+          },
+          {
+            "source": "延长智能中心预约.har#21",
+            "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+            "offset": 9862
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "offset": 5734
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 10024
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 10024
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 5623
+          },
+          {
+            "source": "科学与艺术中心预约.har#5",
+            "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+            "offset": 9864
+          },
+          {
+            "source": "科学与艺术中心预约.har#19",
+            "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+            "offset": 9864
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "not_observed",
+          "SEAT": "javascript_reference",
+          "SEAT2": "not_observed",
+          "STATION": "observed_request",
+          "STATION2": "not_observed",
+          "LIB_SEAT": "javascript_reference",
+          "CS_SEAT": "javascript_reference"
+        },
+        "x-security-model": "成功捕获请求的同时携带组合；服务器最低认证条件未经验证。",
+        "x-observed-content-type-header": "application/json"
+      }
+    },
+    "/api/v3/bookings/{bookingId}/checkInUse": {
+      "post": {
+        "operationId": "checkInUseBooking",
+        "tags": [
+          "签到与二维码"
+        ],
+        "summary": "【JS 引用】签到使用预约",
+        "description": "图书馆分包直接调用 client.post(url)，没有第二个 body 参数。没有实际请求、响应和调用条件；其他资源类型是否接受此动作未知。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoomTypeHeader"
+          },
+          {
+            "$ref": "#/components/parameters/PlatformHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RequestedWithHeader"
+          },
+          {
+            "$ref": "#/components/parameters/RefererHeader"
+          },
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          },
+          {
+            "$ref": "#/components/parameters/BookingId"
+          }
+        ],
+        "security": [
+          {
+            "HysSession": [],
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "未捕获响应，状态码和 body 均未知。",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "x-evidence-level": "javascript_reference",
+        "x-route-kind": "business_api",
+        "x-observed-call-count": 0,
+        "x-javascript-evidence": [
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "offset": 10503
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "offset": 10503
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "offset": 6102
+          }
+        ],
+        "x-resource-type-evidence": {
+          "ROOM": "unknown",
+          "SEAT": "unknown",
+          "SEAT2": "unknown",
+          "STATION": "unknown",
+          "STATION2": "unknown",
+          "LIB_SEAT": "javascript_reference",
+          "CS_SEAT": "unknown"
+        },
+        "x-no-request-body-argument-in-js": true,
+        "x-request-body-acceptance": "unknown",
+        "x-client-header-content-type": "application/json (JS wrapper)"
+      }
+    },
+    "/mobile/libseat": {
+      "get": {
+        "operationId": "openLIBPage",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "校本部图书馆页面入口",
+        "description": "抓包中的已登录 HTML 页面，含 sessionId、loginUser、资源类型配置。不是 JSON API；不能用此捕获还原初次登录。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          }
+        ],
+        "security": [
+          {
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTML 页面；敏感会话和个人信息不提供正文样例。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 1,
+        "x-evidence": [
+          "校本部图书馆预约.har#69"
+        ],
+        "x-corresponding-resource-type": "LIB_SEAT"
+      }
+    },
+    "/mobile/seat2021": {
+      "get": {
+        "operationId": "openSTATIONPage",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "24H学习空间页面入口",
+        "description": "抓包中的已登录 HTML 页面，含 sessionId、loginUser、资源类型配置。不是 JSON API；不能用此捕获还原初次登录。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          }
+        ],
+        "security": [
+          {
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTML 页面；敏感会话和个人信息不提供正文样例。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 1,
+        "x-evidence": [
+          "24H学习空间预约.har#39"
+        ],
+        "x-corresponding-resource-type": "STATION"
+      }
+    },
+    "/mobile/seat-mgr": {
+      "get": {
+        "operationId": "openSEATPage",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "延长智能中心页面入口",
+        "description": "抓包中的已登录 HTML 页面，含 sessionId、loginUser、资源类型配置。不是 JSON API；不能用此捕获还原初次登录。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          }
+        ],
+        "security": [
+          {
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTML 页面；敏感会话和个人信息不提供正文样例。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 1,
+        "x-evidence": [
+          "延长智能中心预约.har#67"
+        ],
+        "x-corresponding-resource-type": "SEAT"
+      }
+    },
+    "/mobile/csseat": {
+      "get": {
+        "operationId": "openCSPage",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "科学与艺术中心页面入口",
+        "description": "抓包中的已登录 HTML 页面，含 sessionId、loginUser、资源类型配置。不是 JSON API；不能用此捕获还原初次登录。",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LanguageCookie"
+          }
+        ],
+        "security": [
+          {
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "捕获的 HTML 页面；敏感会话和个人信息不提供正文样例。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "observed_request",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 1,
+        "x-evidence": [
+          "科学与艺术中心预约.har#64"
+        ],
+        "x-corresponding-resource-type": "CS_SEAT"
+      }
+    },
+    "/login": {
+      "get": {
+        "operationId": "openLoginPage",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "【JS 与项目来源】站点登录入口",
+        "description": "公共封装的 pageToLogin 导航到 baseUrl+\"/login\"。GET 由浏览器导航行为推定；没有捕获页面响应、登录提交或 SSO 交换。 项目 Web 入口使用 from=web，302 指向 oauth 主机并预置本站会话；本次移动 HAR 没有捕获这个跳转。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "未捕获；可能返回 HTML 或继续重定向，实际行为未知。"
+          },
+          "302": {
+            "description": "项目报告 /login?from=web 预置 SPHYS_SESSION 后跳到授权地址；不代表所有 /login 参数的行为。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "授权跳转地址；项目中该分支可包含 state。"
+              },
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "预置本站 Cookie；真实值省略，多条 Set-Cookie 不在示例中合并。"
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          }
+        },
+        "x-evidence-level": "javascript_reference",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 0,
+        "x-javascript-evidence": [
+          {
+            "source": "24H学习空间预约.har#10",
+            "asset": "/static/station2023/js/5.7bc6e7af.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "24H学习空间预约.har#22",
+            "asset": "/static/station2023/js/6.3ace52c4.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "24H学习空间预约.har#28",
+            "asset": "/static/station2023/js/4.2fcbc93f.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "延长智能中心预约.har#5",
+            "asset": "/static/seat-mgr/js/2.61917f6f.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "延长智能中心预约.har#14",
+            "asset": "/static/seat-mgr/js/3.63dd26d9.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "延长智能中心预约.har#21",
+            "asset": "/static/seat-mgr/js/5.e3c8ca1f.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "延长智能中心预约.har#35",
+            "asset": "/static/seat-mgr/js/6.05a10e80.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "校本部图书馆预约.har#7",
+            "asset": "/static/libseat2024/js/2.0dc9ba60.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "校本部图书馆预约.har#15",
+            "asset": "/static/libseat2024/js/5.d4f56b16.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "校本部图书馆预约.har#49",
+            "asset": "/static/libseat2024/js/6.ad3d74c4.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "校本部图书馆预约.har#59",
+            "asset": "/static/libseat2024/js/4.27311a22.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "科学与艺术中心预约.har#5",
+            "asset": "/static/shu-csseat/js/2.c5f5000a.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          },
+          {
+            "source": "科学与艺术中心预约.har#19",
+            "asset": "/static/shu-csseat/js/5.1d3ce84e.js",
+            "expression": "window.location.href=baseUrl+\"/login\""
+          }
+        ],
+        "x-authentication-requirements": "unknown",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "项目 Web 分支使用 web；缺省入口仍由已有 JS 引用支持。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "web"
+          }
+        ],
+        "x-repository-evidence": [
+          {
+            "path": "systems/there.shu.edu.cn/README.md",
+            "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+            "lines": 71
+          },
+          {
+            "path": "systems/there.shu.edu.cn/config.py",
+            "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+            "lines": 20
+          }
+        ]
+      }
+    },
+    "/login-oauth2": {
+      "get": {
+        "operationId": "handleThereOAuthCallback",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "【项目来源】本站 OAuth 入口与回调",
+        "description": "同一路径承担两种角色：不带 code 时由项目描述为授权入口；带 code 时换成 there 会话。成功 302 到 /web?authJump=...。项目记录过无 state 成功回调和坏 code 返回 HTTP 200 空正文，不能仅靠 HTTP 200 或域名判定登录成功。",
+        "security": [],
+        "responses": {
+          "302": {
+            "description": "项目描述的入口授权重定向，或成功回调跳转到 /web?authJump=...；按是否携带 code 区分。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "入口时为 oauth/authorize；成功回调时为本站 /web?authJump=REDACTED_AUTH_JUMP。"
+              },
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "项目报告写入/更新 SPHYS_SESSION 与 authenticityToken；实际值省略。"
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "200": {
+            "description": "项目报告坏 code 的一种失败表现是空正文、停留在回调 URL；不是成功 JSON。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": ""
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "default": {
+            "description": "其他情况未知，未在线复核。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "authentication_callback",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "systems/there.shu.edu.cn/README.md",
+            "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+            "lines": 71
+          },
+          {
+            "path": "systems/there.shu.edu.cn/config.py",
+            "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+            "lines": 20
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OAuthCode"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "项目记录一条没有该参数的成功回调。其校验机制仅为作者分析，不在本次验证；不要把它当作省略关联上下文的通用建议。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_OAUTH_STATE"
+          }
+        ],
+        "x-server-side-exchange": "项目描述由本站后端消费 OAuth code；内部 token 请求、client secret 和响应未提供完整证据，不定义浏览器可直接调用的 /oauth/token 契约。"
+      }
+    },
+    "/web": {
+      "get": {
+        "operationId": "openThereWebLanding",
+        "tags": [
+          "页面与登录"
+        ],
+        "summary": "【项目来源】登录后 Web 落地页",
+        "description": "项目描述成功落地 /web?authJump=...，随后 SPA 路由到 /web/home。本次 HAR 只记录移动页面，因此 authJump 的生成和消费未在此重新验证。",
+        "security": [
+          {
+            "SphysSession": [],
+            "AuthenticityToken": []
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "项目记录成功落地链的中间重定向，具体 Location 未提供。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "200": {
+            "description": "项目落地 HTML，之后 SPA 自行切换页面。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "302": {
+            "description": "项目描述未登录 Web 入口转 /login?from=web；原始响应未提供。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "default": {
+            "description": "其余状态未知。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "systems/there.shu.edu.cn/README.md",
+            "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+            "lines": 71
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "parameters": [
+          {
+            "name": "authJump",
+            "in": "query",
+            "required": false,
+            "description": "项目回调产生的落地令牌；64 位只是样本，不设固定长度。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_AUTH_JUMP"
+          }
+        ]
+      }
+    },
+    "/oauth/userLogin": {
+      "post": {
+        "operationId": "ssoPasswordLogin",
+        "tags": [
+          "共享 SSO 协议"
+        ],
+        "summary": "【项目来源】密码认证",
+        "description": "来源于 ShuSSO.login 和密码入口；password 为 RSA 密文。message=success 后仍需检查 twoStepRequired；只有所需二步完成才能按项目流程使用完整 SSO 会话。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "仅有 POC 消费字段，未提供本次真实响应；成功流程报告下发 SHU_OAUTH2。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SsoMessageResponseExpected"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L53",
+            "lines": 285,
+            "line": 53
+          },
+          {
+            "path": "src/entry_password.py",
+            "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py#L34",
+            "lines": 119,
+            "line": 34
+          },
+          {
+            "path": "src/utils.py",
+            "sha256": "cadae7db2a1a5c4a1a183d9b00c6278c0955b4d67c83df0c2374ccb9c123cc6c",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/utils.py#L16",
+            "lines": 71,
+            "line": 16
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L53"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://newsso.shu.edu.cn",
+            "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RequestIdHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SsoPasswordLoginRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/twoStep/send": {
+      "post": {
+        "operationId": "ssoSendTwoStepCode",
+        "tags": [
+          "共享 SSO 协议"
+        ],
+        "summary": "【项目来源】发送二步验证码",
+        "description": "只在 twoStepRequired=true 且 method 在服务端返回的可用集合中时进入。使用同一 SSO 会话 jar；验证码发送会产生真实外部动作，本次仅描述协议，未执行。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "POC 检查 message 是否 success；HTTP 状态和完整响应未知。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SsoMessageResponseExpected"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L75",
+            "lines": 285,
+            "line": 75
+          },
+          {
+            "path": "src/entry_password.py",
+            "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py#L49",
+            "lines": 119,
+            "line": 49
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L75"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://newsso.shu.edu.cn",
+            "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SsoTwoStepSendRequest"
+              }
+            }
+          }
+        },
+        "x-session-context": "原始 POC 复用 requests.Session；二步完成前具体临时 Cookie 名称未知，不强制要求已完成登录的 SHU_OAUTH2。"
+      }
+    },
+    "/oauth/twoStep/verify": {
+      "post": {
+        "operationId": "ssoVerifyTwoStepCode",
+        "tags": [
+          "共享 SSO 协议"
+        ],
+        "summary": "【项目来源】校验二步验证码",
+        "description": "代码将登录字段与 code/method 合并，password 仍是加密后的值；不得把二步 code 与 OAuth 授权码混同。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "POC 检查 message 是否 success；项目描述完成后建立 SHU_OAUTH2。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SsoMessageResponseExpected"
+                }
+              }
+            }
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L87",
+            "lines": 285,
+            "line": 87
+          },
+          {
+            "path": "src/entry_password.py",
+            "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py#L71",
+            "lines": 119,
+            "line": 71
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L87"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://newsso.shu.edu.cn",
+            "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SsoTwoStepVerifyRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/authorize": {
+      "get": {
+        "operationId": "ssoAuthorizeThere",
+        "tags": [
+          "共享 SSO 协议"
+        ],
+        "summary": "【项目来源】向本站分配授权码",
+        "description": "本站浏览器入口在项目文档中指向 oauth 主机；POC 使用 newsso 主机的已有会话取 code。仅按 Cookie 实际域作用，不把 host-scoped Cookie 的复用推定成跨主机直传。",
+        "security": [
+          {
+            "SsoSession": []
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "项目授权结果通过 Location 返回本站 code，或尚未登录时导航到 SSO 登录页面；不能只按 302 判定取码成功。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "需检查是否为本站回调及是否含 code；示例一次性码隐藏。"
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "default": {
+            "description": "其他响应未知。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "systems/there.shu.edu.cn/config.py",
+            "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+            "lines": 20
+          },
+          {
+            "path": "systems/there.shu.edu.cn/README.md",
+            "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+            "lines": 71
+          },
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L102",
+            "lines": 285,
+            "line": 102
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://newsso.shu.edu.cn",
+            "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+          },
+          {
+            "url": "https://oauth.shu.edu.cn",
+            "description": "项目文档报告 there 浏览器授权入口使用此主机；host-scoped Cookie 不可据此自动跨主机复制"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "description": "POC 授权码请求字段。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "code",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "description": "本站公开 OAuth client ID，不是 client secret。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eDrd-M0i0WoSWRxk7ShDC1n-fbS7jRvi",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": true,
+            "description": "本站回调配置。",
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "example": "https://there.shu.edu.cn/login-oauth2",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "description": "there 配置明确要求字符串 1；不是其他业务系统的 scope 集合。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "1",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "由相应入口或上下文提供；项目说明有含值、空值和缺省分支。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_OAUTH_STATE"
+          }
+        ],
+        "x-there-client-profile": {
+          "client_id": "eDrd-M0i0WoSWRxk7ShDC1n-fbS7jRvi",
+          "redirect_uri": "https://there.shu.edu.cn/login-oauth2",
+          "scope": "1"
+        }
+      }
+    },
+    "/oauth2/login/": {
+      "get": {
+        "operationId": "openSsoLoginPage",
+        "tags": [
+          "共享 SSO 协议"
+        ],
+        "summary": "【项目来源】SSO 登录页面及公钥引导",
+        "description": "rsa_key.py 明确从此 GET 页面发现带版本哈希的 JS 清单与登录 chunk。公钥获取路径会随部署变化，不把某个哈希文件或内置回退 PEM 固定为 API。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "项目读取 HTML 文本以发现 JS；本次未获取服务响应。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/rsa_key.py",
+            "sha256": "ea823b6d0ee45ce63be4f3e82b1db2c00de9fe4d6955c812e7d42d34e421cd20",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/rsa_key.py#L61",
+            "lines": 117,
+            "line": 61
+          },
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L133",
+            "lines": 285,
+            "line": 133
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/rsa_key.py#L61"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://newsso.shu.edu.cn",
+            "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+          }
+        ]
+      }
+    },
+    "/wwopen/sso/qrConnect": {
+      "get": {
+        "operationId": "wecomOpenLoginQr",
+        "tags": [
+          "企业微信登录"
+        ],
+        "summary": "【项目来源】企微扫码登录页面",
+        "description": "POC GET 此 HTML，从 qrImg?key=... 解析会话 key。该页面不属于 there，不使用本站 x-hys-session。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "POC 读取 HTML 并提取 key；无原始响应用于完整验证。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "html_page",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L179",
+            "lines": 285,
+            "line": 179
+          },
+          {
+            "path": "src/config.py",
+            "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L19",
+            "lines": 32,
+            "line": 19
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L179"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://open.work.weixin.qq.com",
+            "description": "企微登录协议主机；本次未访问"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appid",
+            "in": "query",
+            "required": false,
+            "description": "公开应用标识。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "wxa8dea949443de641"
+          },
+          {
+            "name": "agentid",
+            "in": "query",
+            "required": false,
+            "description": "配置中的应用 agent ID。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "1000059"
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": false,
+            "description": "扫码确认后的 SSO 回调。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "https://newsso.shu.edu.cn/oauth/wecom/qrcode"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "POC 使用 base64url OAuth 上下文。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_BASE64URL_CONTEXT"
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "description": "POC 字面参数。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "zh"
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "description": "POC 字面版本，未验证其他值。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "1.2.7"
+          },
+          {
+            "name": "login_type",
+            "in": "query",
+            "required": false,
+            "description": "POC SDK 模式字面值。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "jssdk"
+          }
+        ]
+      }
+    },
+    "/wwopen/sso/l/qrConnect": {
+      "get": {
+        "operationId": "wecomPollLoginQr",
+        "tags": [
+          "企业微信登录"
+        ],
+        "summary": "【项目来源】等待扫码确认（POC GET/JSONP）",
+        "description": "POC 长轮询解析 JSONP，确认后取得 auth_code；这是企微一次性确认码，不是本站 bookingId，也不是下一段 SSO 授权码。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "JSONP 文本，POC 消费 status/auth_code；没有 HTTP/完整响应契约。",
+            "content": {
+              "application/javascript": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L213",
+            "lines": 285,
+            "line": 213
+          },
+          {
+            "path": "src/config.py",
+            "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L23",
+            "lines": 32,
+            "line": 23
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L213"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://open.work.weixin.qq.com",
+            "description": "企微登录协议主机；本次未访问"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "callback",
+            "in": "query",
+            "required": false,
+            "description": "POC JSONP 回调函数名。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "jsonpCallback"
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "description": "扫码会话 key，隐藏。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_QR_KEY"
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": false,
+            "description": "与扫码页面一致的回调 URI。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "https://newsso.shu.edu.cn/oauth/wecom/qrcode"
+          },
+          {
+            "name": "appid",
+            "in": "query",
+            "required": false,
+            "description": "公开应用标识。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "wxa8dea949443de641"
+          },
+          {
+            "name": "_",
+            "in": "query",
+            "required": false,
+            "description": "POC 时间戳参数；单位毫秒。",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 0
+          }
+        ],
+        "x-consumed-payload-fields": {
+          "status": "string",
+          "auth_code": "string"
+        },
+        "x-known-statuses-from-code": [
+          "QRCODE_SCAN_NEVER",
+          "QRCODE_SCAN_ING",
+          "QRCODE_SCAN_SUCC",
+          "QRCODE_SCAN_ERR",
+          "QRCODE_SCAN_OVERDUE",
+          "QRCODE_SCAN_CANCEL"
+        ]
+      }
+    },
+    "/wwopen/sso/lp/qrConnect": {
+      "post": {
+        "operationId": "wecomBrowserLoginQrPoll",
+        "tags": [
+          "企业微信登录"
+        ],
+        "summary": "【项目来源】浏览器扫码链的 POST 轮询",
+        "description": "there 项目文档记录浏览器使用 POST /wwopen/sso/lp/qrConnect，但未提供参数和正文。它与 POC 的 GET /sso/l/qrConnect 是不同传输分支，不能直接复用方法或参数。",
+        "security": [],
+        "responses": {
+          "default": {
+            "description": "来自项目实现或说明，实际状态码/响应未被本次 HAR 捕获。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "systems/there.shu.edu.cn/README.md",
+            "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L34",
+            "lines": 71,
+            "line": 34
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L34"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://open.work.weixin.qq.com",
+            "description": "企微登录协议主机；本次未访问"
+          }
+        ],
+        "x-request-body": "unknown; no fields invented"
+      }
+    },
+    "/oauth/wecom/qrcode": {
+      "get": {
+        "operationId": "ssoRedeemWecomCode",
+        "tags": [
+          "共享 SSO 协议"
+        ],
+        "summary": "【项目来源】企微确认码换 SSO 会话",
+        "description": "POC 使用 auth_code、state、appid 请求 newsso 回调。该 state 是 base64url 的登录上下文，不能与本站 OAuth state 的空/缺省行为混用。",
+        "security": [],
+        "responses": {
+          "302": {
+            "description": "项目报告建立 SHU_OAUTH2 后继续授权链；Location 需区分认证失败跳转。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "SSO Cookie，和本站 SPHYS_SESSION 分开管理。"
+              }
+            },
+            "x-evidence-level": "repo_reference"
+          },
+          "default": {
+            "description": "POC 将 badRequestParams 正文及 wecomAuthFailed 跳转视为失败，但状态/完整 body 未给出。",
+            "x-evidence-level": "repo_reference",
+            "x-runtime-validation": "not_performed"
+          }
+        },
+        "x-evidence-level": "repo_reference",
+        "x-route-kind": "auth_api",
+        "x-observed-call-count": 0,
+        "x-repository-evidence": [
+          {
+            "path": "src/client.py",
+            "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L271",
+            "lines": 285,
+            "line": 271
+          },
+          {
+            "path": "README.md",
+            "sha256": "5744f9c1e57b76877774e7b102dc75f3fe81f48ed0a9fb13b47fc38d4ac222ba",
+            "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/README.md#L102",
+            "lines": 626,
+            "line": 102
+          }
+        ],
+        "externalDocs": {
+          "description": "固定提交的原始项目来源",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L271"
+        },
+        "x-validation-status": "source_review_only; no_login_or_network_probe",
+        "servers": [
+          {
+            "url": "https://newsso.shu.edu.cn",
+            "description": "POC src/config.py 的 SSO_BASE；本次未访问"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "description": "企微轮询产生的 auth_code。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_WECOM_AUTH_CODE",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "description": "项目明确要求 base64url 去填充的 OAuth params 上下文。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "REDACTED_BASE64URL_CONTEXT",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          },
+          {
+            "name": "appid",
+            "in": "query",
+            "required": true,
+            "description": "项目明确要求此公开应用标识。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "wxa8dea949443de641",
+            "x-requiredness-source": "repository documentation or implementation; not tested in this analysis"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "loginName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namePinyin": {
+            "type": "string"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "cardNo": {
+            "type": "string"
+          },
+          "nickName": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "headImgUrl": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "deptId": {
+            "type": "string"
+          },
+          "deptName": {
+            "type": "string"
+          },
+          "corp": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "meetingRoomCount": {
+                "type": "integer"
+              },
+              "abilities": {
+                "type": "array",
+                "items": {
+                  "description": "捕获样本均为空，元素类型未知。",
+                  "note": "所有样本均为空数组"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "corpName": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusLabel": {
+            "type": "string"
+          },
+          "deptIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "depts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "shortName": {
+                  "type": "string"
+                },
+                "fullName": {
+                  "type": "string"
+                },
+                "parentId": {
+                  "type": "string"
+                },
+                "parentName": {
+                  "type": "string"
+                },
+                "showOrder": {
+                  "type": "integer"
+                },
+                "labelName": {
+                  "type": "string"
+                },
+                "userCount": {
+                  "type": "integer"
+                },
+                "userCountWithNew": {
+                  "type": "integer"
+                },
+                "upstreamId": {
+                  "type": "string"
+                },
+                "isSett": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "isAnonymous": {
+            "type": "boolean"
+          },
+          "disableBooking": {
+            "type": "boolean"
+          },
+          "defaultArea": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              },
+              "shortName": {
+                "type": "string"
+              },
+              "supportRoomTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "validRoomCount": {
+                "type": "integer"
+              },
+              "abilities": {
+                "type": "array",
+                "items": {
+                  "description": "捕获样本均为空，元素类型未知。",
+                  "note": "所有样本均为空数组"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "officeAreaResponse": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              },
+              "shortName": {
+                "type": "string"
+              },
+              "supportRoomTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "validRoomCount": {
+                "type": "integer"
+              },
+              "abilities": {
+                "type": "array",
+                "items": {
+                  "description": "捕获样本均为空，元素类型未知。",
+                  "note": "所有样本均为空数组"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "receiveMeetingMail": {
+            "type": "boolean"
+          },
+          "receiveNotify": {
+            "type": "boolean"
+          },
+          "upstreamId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "RecentBooking": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "ownerName": {
+            "type": "string"
+          },
+          "ownerMobile": {
+            "type": "string"
+          },
+          "ownerPhone": {
+            "type": "string"
+          },
+          "ownerPosition": {
+            "type": "string"
+          },
+          "ownerDeptId": {
+            "type": "string"
+          },
+          "clientType": {
+            "type": "string"
+          },
+          "meetingInfra": {
+            "type": "string"
+          },
+          "ownerUpStreamId": {
+            "type": "string"
+          },
+          "ownerUpstreamId": {
+            "type": "string"
+          },
+          "ownerDeptName": {
+            "type": "string"
+          },
+          "ownerJobNumber": {
+            "type": "string"
+          },
+          "ownerUserNamePinYin": {
+            "type": "string"
+          },
+          "bookingUserId": {
+            "type": "string"
+          },
+          "bookingUsernamePinYin": {
+            "type": "string"
+          },
+          "bookingUserUpStreamId": {
+            "type": "string"
+          },
+          "bookingUserName": {
+            "type": "string"
+          },
+          "bookingUserShowName": {
+            "type": "string"
+          },
+          "beginTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "integer"
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "roomName": {
+            "type": "string"
+          },
+          "officeAreaId": {
+            "type": "string"
+          },
+          "officeAreaName": {
+            "type": "string"
+          },
+          "allOfficeAreaName": {
+            "type": "string"
+          },
+          "roomNeedApproved": {
+            "type": "boolean"
+          },
+          "templateType": {
+            "type": "string"
+          },
+          "receptionId": {
+            "type": "string"
+          },
+          "receptionName": {
+            "type": "string"
+          },
+          "receptionMobile": {
+            "type": "string"
+          },
+          "memberNumbers": {
+            "type": "integer"
+          },
+          "customFormIds": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "roomType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "workflow": {
+            "type": "string"
+          },
+          "statusLabel": {
+            "type": "string"
+          },
+          "needCheckin": {
+            "type": "boolean"
+          },
+          "checkedStatus": {
+            "type": "string"
+          },
+          "meetingRepeatType": {
+            "type": "string"
+          },
+          "meetingType": {
+            "type": "string"
+          },
+          "busyCssName": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "beforeNotify": {
+            "type": "boolean"
+          },
+          "facilityNames": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "origEndAt": {
+            "type": "string"
+          }
+        },
+        "x-not-present-in-every-sample": [
+          "origEndAt"
+        ],
+        "additionalProperties": true
+      },
+      "DateOverview": {
+        "type": "object",
+        "properties": {
+          "currentOfficeArea": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "shortName": {
+                "type": "string"
+              },
+              "supportRoomTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "abilities": {
+                "type": "array",
+                "items": {
+                  "description": "捕获样本均为空，元素类型未知。",
+                  "note": "所有样本均为空数组"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "bookingTimes": {
+            "$ref": "#/components/schemas/BookingTimes"
+          },
+          "bookingDays": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "string"
+                },
+                "workDay": {
+                  "type": "boolean"
+                },
+                "lawDay": {
+                  "type": "boolean"
+                },
+                "weekDay": {
+                  "type": "integer"
+                },
+                "meetingCount": {
+                  "type": "integer"
+                },
+                "roomCount": {
+                  "type": "integer"
+                },
+                "bookingRoomCount": {
+                  "type": "integer"
+                },
+                "bookingRate": {
+                  "type": "number"
+                },
+                "meetingMinutes": {
+                  "type": "integer"
+                },
+                "rooms": {
+                  "type": "array",
+                  "items": {
+                    "description": "捕获样本均为空，元素类型未知。",
+                    "note": "所有样本均为空数组"
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "AreaNode": {
+        "type": "object",
+        "properties": {
+          "disabledResourceCount": {
+            "type": "integer"
+          },
+          "bookingTimes": {
+            "$ref": "#/components/schemas/BookingTimes"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "showOrder": {
+            "type": "integer"
+          },
+          "supportRoomTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "totalResourceCount": {
+            "type": "integer"
+          },
+          "bookedResourceCount": {
+            "type": "integer"
+          },
+          "bookedMeetingCount": {
+            "type": "integer"
+          },
+          "bookableResourceCount": {
+            "type": "integer"
+          },
+          "busyResourceCount": {
+            "type": "integer"
+          },
+          "freeResourceCount": {
+            "type": "integer"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "parentName": {
+            "type": "string"
+          }
+        },
+        "x-not-present-in-every-sample": [
+          "totalResourceCount",
+          "bookedResourceCount",
+          "bookedMeetingCount",
+          "bookableResourceCount",
+          "busyResourceCount",
+          "freeResourceCount",
+          "parentId",
+          "parentName"
+        ],
+        "additionalProperties": true
+      },
+      "AreaDetail": {
+        "type": "object",
+        "properties": {
+          "totalResourceCount": {
+            "type": "integer"
+          },
+          "bookedResourceCount": {
+            "type": "integer"
+          },
+          "bookedMeetingCount": {
+            "type": "integer"
+          },
+          "disabledResourceCount": {
+            "type": "integer"
+          },
+          "bookableResourceCount": {
+            "type": "integer"
+          },
+          "bookingTimes": {
+            "$ref": "#/components/schemas/BookingTimes"
+          },
+          "assetFiles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "uid": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "thumbnailUrl": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "fileName": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "bookingDays": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "showOrder": {
+            "type": "integer"
+          },
+          "supportRoomTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "parentName": {
+            "type": "string"
+          },
+          "rooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Room"
+            }
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "busyResourceCount": {
+            "type": "integer"
+          },
+          "freeResourceCount": {
+            "type": "integer"
+          }
+        },
+        "x-not-present-in-every-sample": [
+          "busyResourceCount",
+          "freeResourceCount"
+        ],
+        "additionalProperties": true
+      },
+      "BookingDetail": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "ownerName": {
+            "type": "string"
+          },
+          "ownerMobile": {
+            "type": "string"
+          },
+          "ownerPhone": {
+            "type": "string"
+          },
+          "ownerPosition": {
+            "type": "string"
+          },
+          "ownerDeptId": {
+            "type": "string"
+          },
+          "clientType": {
+            "type": "string"
+          },
+          "meetingInfra": {
+            "type": "string"
+          },
+          "ownerDeptUpStreamId": {
+            "type": "string"
+          },
+          "ownerUpStreamId": {
+            "type": "string"
+          },
+          "ownerUpstreamId": {
+            "type": "string"
+          },
+          "ownerDeptName": {
+            "type": "string"
+          },
+          "ownerJobNumber": {
+            "type": "string"
+          },
+          "ownerUserNamePinYin": {
+            "type": "string"
+          },
+          "bookingUserId": {
+            "type": "string"
+          },
+          "bookingUsernamePinYin": {
+            "type": "string"
+          },
+          "bookingUserUpStreamId": {
+            "type": "string"
+          },
+          "bookingUserDeptUpStreamId": {
+            "type": "string"
+          },
+          "bookingUserName": {
+            "type": "string"
+          },
+          "bookingUserShowName": {
+            "type": "string"
+          },
+          "beginTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "integer"
+          },
+          "roomId": {
+            "type": "string"
+          },
+          "roomName": {
+            "type": "string"
+          },
+          "officeAreaId": {
+            "type": "string"
+          },
+          "officeAreaName": {
+            "type": "string"
+          },
+          "allOfficeAreaName": {
+            "type": "string"
+          },
+          "copyToMembers": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "roomNeedApproved": {
+            "type": "boolean"
+          },
+          "templateType": {
+            "type": "string"
+          },
+          "receptionId": {
+            "type": "string"
+          },
+          "receptionName": {
+            "type": "string"
+          },
+          "receptionMobile": {
+            "type": "string"
+          },
+          "memberNumbers": {
+            "type": "integer"
+          },
+          "customFormIds": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "roomType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "workflow": {
+            "type": "string"
+          },
+          "statusLabel": {
+            "type": "string"
+          },
+          "needCheckin": {
+            "type": "boolean"
+          },
+          "joinStatus": {
+            "type": "string"
+          },
+          "checkinStatus": {
+            "type": "string"
+          },
+          "currentUserCheckinStatus": {
+            "type": "string"
+          },
+          "checkedStatus": {
+            "type": "string"
+          },
+          "meetingRepeatType": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "namePinyin": {
+                  "type": "string"
+                },
+                "joinStatus": {
+                  "type": "string"
+                },
+                "joinAt": {
+                  "type": "string"
+                },
+                "checkinStatus": {
+                  "type": "string"
+                },
+                "checkAt": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "commentCount": {
+            "type": "integer"
+          },
+          "meetingType": {
+            "type": "string"
+          },
+          "qrCodeUrl": {
+            "type": "string"
+          },
+          "qrCodeValue": {
+            "type": "string"
+          },
+          "qrCodeTitle": {
+            "type": "string"
+          },
+          "memberCount": {
+            "type": "integer"
+          },
+          "busyCssName": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "meetingOrderLists": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "checkedInPeopleCount": {
+            "type": "integer"
+          },
+          "confirmedPeopleCount": {
+            "type": "integer"
+          },
+          "refusedPeopleCount": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "meetingFiles": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "beforeNotify": {
+            "type": "boolean"
+          },
+          "facilityNames": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "nowAvailableDelayMinutes": {
+            "type": "integer"
+          },
+          "checkins": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          },
+          "form": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "showExtras": {
+            "type": "boolean"
+          },
+          "showExtrasSwitch": {
+            "type": "boolean"
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "otherSeatList": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          }
+        },
+        "x-not-present-in-every-sample": [
+          "checkins",
+          "otherSeatList"
+        ],
+        "additionalProperties": true
+      },
+      "BookingCreationResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "templateType": {
+            "type": "string"
+          },
+          "beforeNotify": {
+            "type": "boolean"
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "BookingCancellationResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "templateType": {
+            "type": "string"
+          },
+          "beforeNotify": {
+            "type": "boolean"
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "description": "捕获样本均为空，元素类型未知。",
+              "note": "所有样本均为空数组"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "officeAreaId": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "showOrder": {
+            "type": "integer"
+          },
+          "isBusy": {
+            "type": "boolean"
+          },
+          "isBooked": {
+            "type": "boolean"
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentBooking": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "ownerId": {
+                "type": "string"
+              },
+              "beginTime": {
+                "type": "string"
+              },
+              "endTime": {
+                "type": "string"
+              },
+              "templateType": {
+                "type": "string"
+              },
+              "beforeNotify": {
+                "type": "boolean"
+              },
+              "abilities": {
+                "type": "array",
+                "items": {
+                  "description": "捕获样本均为空，元素类型未知。",
+                  "note": "所有样本均为空数组"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "x-not-present-in-every-sample": [
+          "currentBooking"
+        ],
+        "additionalProperties": true
+      },
+      "BookingTimes": {
+        "type": "object",
+        "properties": {
+          "timeBlockType": {
+            "type": "string"
+          },
+          "startHour": {
+            "type": "integer"
+          },
+          "endHour": {
+            "type": "integer"
+          },
+          "morningEndHour": {
+            "type": "integer"
+          },
+          "afternoonStartHour": {
+            "type": "integer"
+          },
+          "maxDuration": {
+            "type": "integer"
+          },
+          "configMaxDuration": {
+            "type": "integer"
+          },
+          "meetingInterval": {
+            "type": "integer"
+          },
+          "bookingLimitDays": {
+            "type": "integer"
+          },
+          "meetingHalfHours": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "timeBlocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "startMinutes": {
+                  "type": "integer"
+                },
+                "endMinutes": {
+                  "type": "integer"
+                },
+                "disabled": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "allMeetingDurations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "allWeekDays": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "meetingRepeatTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "needCheckin": {
+            "type": "boolean"
+          },
+          "disablePersonConflict": {
+            "type": "boolean"
+          },
+          "enableFixedBooking": {
+            "type": "boolean"
+          },
+          "enableAgentBooking": {
+            "type": "boolean"
+          },
+          "minDuration": {
+            "type": "integer"
+          },
+          "supportAcrossDayBooking": {
+            "type": "boolean"
+          },
+          "suggestStartTime": {
+            "type": "string"
+          },
+          "suggestEndTime": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "description": "多入口、通用概览和区域详情配置的字段并集。请以选中区域的配置为准；bookingLimitDays 不等于日期数组长度，也不能直接断言实际预约截止天数。"
+      },
+      "RoomType": {
+        "type": "string",
+        "examples": [
+          "ROOM",
+          "SEAT",
+          "SEAT2",
+          "STATION",
+          "STATION2",
+          "LIB_SEAT",
+          "CS_SEAT"
+        ],
+        "description": "页面配置列出 7 个值；请求仅实际使用 LIB_SEAT、STATION、SEAT、CS_SEAT。其余 3 个值与所有操作的兼容性未验证；不以 enum 封闭服务器可能支持的其他类型。",
+        "x-values-evidence": {
+          "ROOM": "html_configuration_only",
+          "SEAT": "observed_request",
+          "SEAT2": "html_configuration_only",
+          "STATION": "observed_request",
+          "STATION2": "html_configuration_only",
+          "LIB_SEAT": "observed_request",
+          "CS_SEAT": "observed_request"
+        }
+      },
+      "BookingCreateRequest": {
+        "type": "object",
+        "properties": {
+          "rooms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "officeAreaId": {
+                  "type": "string"
+                },
+                "disabled": {
+                  "type": "boolean"
+                },
+                "showOrder": {
+                  "type": "integer"
+                },
+                "isBusy": {
+                  "type": "boolean"
+                },
+                "isBooked": {
+                  "type": "boolean"
+                },
+                "abilities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": true
+            },
+            "description": "观测请求直接传入区域详情返回的完整座位对象；不保证仅传 id 可以成功。"
+          },
+          "times": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingTimeSelection"
+            }
+          },
+          "subject": {
+            "type": "string",
+            "description": "8 次提交均取 profile.data.name；服务端可能调整展示标题。"
+          },
+          "meetingMembers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "8 次提交均为 [profile.data.id]；代预约规则和多成员行为未验证。"
+          }
+        },
+        "additionalProperties": true,
+        "description": "捕获到的完整请求体结构；仅观察到单座位、单时段。没有通过删除字段验证 required，也没有验证多座位、多时段提交。",
+        "x-requiredness": "unverified; absence of required does not prove fields may be omitted",
+        "x-observed-present-properties": [
+          "rooms",
+          "times",
+          "subject",
+          "meetingMembers"
+        ]
+      },
+      "BookingTimeSelection": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "本次格式 HH:mm，使用校园当地时间 Asia/Shanghai；未验证其他格式。"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "本次格式 HH:mm，使用校园当地时间 Asia/Shanghai；未验证其他格式。"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ApiEnvelope": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "code": {
+            "type": "integer",
+            "examples": [
+              0,
+              200
+            ],
+            "description": "在捕获的请求中 0 表示成功，200 表示业务拒绝；这不是 HTTP 状态码，也不代表完整错误码集合。"
+          },
+          "data": {},
+          "warnMessage": {
+            "type": "string"
+          },
+          "noticeMessage": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "90 次实际业务请求的 HTTP 状态均为 200，业务结果由 JSON code 和提示字段决定。失败不一定有 message。"
+      },
+      "ProfileResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserProfile"
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "RecentBookingsResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecentBooking"
+            }
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "OverviewResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DateOverview"
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "AreasResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaNode"
+            }
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "AreaDetailResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AreaDetail"
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "CreateBookingResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "warnMessage": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingCreationResult"
+            }
+          },
+          "noticeMessage": {
+            "type": "string"
+          }
+        },
+        "x-not-present-in-every-sample": [
+          "warnMessage",
+          "message",
+          "data",
+          "noticeMessage"
+        ],
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "BookingDetailResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/BookingDetail"
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "CancelBookingResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/BookingCancellationResult"
+          },
+          "noticeMessage": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "FinishBookingResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "noticeMessage": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "description": "仅由捕获样本合并的响应字段，不是服务器公布的完整契约。code=0 为样本成功；业务拒绝仍可使用 HTTP 200。"
+      },
+      "SsoPasswordLoginRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "username": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "学号/工号，示例隐藏。"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "传输值为 RSA PKCS#1 v1.5 加密后标准 base64 的密文。公钥由登录页面对应版本的 JS 提供；不要把明文或本项目回退公钥当作永久契约。"
+          },
+          "tenantId": {
+            "type": "string",
+            "examples": [
+              "上海大学"
+            ],
+            "description": "POC 默认 tenant；未验证其他值。"
+          },
+          "params": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "OAuth 上下文 JSON 的 base64url 编码，去掉 = 填充；项目文档明确指出缺少会报 badRequestParams。",
+            "x-content-encoding": "base64url-no-padding",
+            "x-decoded-schema": {
+              "$ref": "#/components/schemas/SsoLoginContext"
+            }
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "description": "字段由 POC login() 构造；仅 params 的必填性由项目文档明确报告，其余未做消融验证。",
+        "x-evidence-level": "repo_reference"
+      },
+      "SsoLoginContext": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "responseType": {
+            "type": "string",
+            "examples": [
+              "code"
+            ]
+          },
+          "clientId": {
+            "type": "string",
+            "examples": [
+              "eDrd-M0i0WoSWRxk7ShDC1n-fbS7jRvi"
+            ]
+          },
+          "clientName": {
+            "type": "string",
+            "examples": [
+              "空间预约管理系统"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "examples": [
+              "1"
+            ]
+          },
+          "redirectUri": {
+            "type": "string",
+            "format": "uri",
+            "examples": [
+              "https://there.shu.edu.cn/login-oauth2"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "examples": [
+              ""
+            ]
+          }
+        },
+        "description": "POC runner.session_params 的解码结构。它是 params/企微 state 的内容，不是直接提交的顶层登录 JSON。"
+      },
+      "SsoMessageResponseExpected": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "message": {
+            "type": "string",
+            "examples": [
+              "success",
+              "badRequestParams"
+            ]
+          },
+          "twoStepRequired": {
+            "type": "boolean"
+          },
+          "twoStepMethods": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "POC 代码消费的字段，仅表示客户端期望；没有原始响应用于验证该 schema。",
+        "x-evidence-level": "repo_reference"
+      },
+      "SsoTwoStepSendRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "method": {
+            "type": "string",
+            "examples": [
+              "sms",
+              "wecom"
+            ],
+            "description": "从 twoStepMethods 中选择；不封闭为仅这两个方法。"
+          }
+        }
+      },
+      "SsoTwoStepVerifyRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "username": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "学号/工号，示例隐藏。"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "传输值为 RSA PKCS#1 v1.5 加密后标准 base64 的密文。公钥由登录页面对应版本的 JS 提供；不要把明文或本项目回退公钥当作永久契约。"
+          },
+          "tenantId": {
+            "type": "string",
+            "examples": [
+              "上海大学"
+            ],
+            "description": "POC 默认 tenant；未验证其他值。"
+          },
+          "params": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "OAuth 上下文 JSON 的 base64url 编码，去掉 = 填充；项目文档明确指出缺少会报 badRequestParams。",
+            "x-content-encoding": "base64url-no-padding",
+            "x-decoded-schema": {
+              "$ref": "#/components/schemas/SsoLoginContext"
+            }
+          },
+          "code": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "用户输入的二步验证码，不能混同于 OAuth code 或二维码 auth_code。"
+          },
+          "method": {
+            "type": "string",
+            "examples": [
+              "sms",
+              "wecom"
+            ]
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "description": "verify_2fa_code 合并登录上下文、code、method；字段形状来自代码，运行行为未经本次测试。",
+        "x-evidence-level": "repo_reference"
+      }
+    },
+    "parameters": {
+      "RoomTypeHeader": {
+        "name": "x-room-type",
+        "in": "header",
+        "required": false,
+        "description": "成功捕获的全部 90 次业务请求均有此头。用于四个前端的资源类型区分；省略行为及跨类型兼容性未验证。",
+        "schema": {
+          "$ref": "#/components/schemas/RoomType"
+        },
+        "x-observed-in-all-business-requests": true,
+        "x-requiredness": "unverified"
+      },
+      "PlatformHeader": {
+        "name": "x-hys-platform",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "examples": [
+            "UNDEFINE"
+          ]
+        },
+        "description": "捕获值 UNDEFINE；不能把 HTML apiPlatform=WXCP 直接当作此头的值。"
+      },
+      "LanguageHeader": {
+        "name": "x-lang",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "examples": [
+            "zh"
+          ]
+        },
+        "description": "JS 从 loginUser.lang 读取，捕获值 zh。"
+      },
+      "RequestedWithHeader": {
+        "name": "X-Requested-With",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "examples": [
+            "com.tencent.wework"
+          ]
+        },
+        "description": "捕获于企业微信 WebView，是否为服务器必需条件未验证。"
+      },
+      "RefererHeader": {
+        "name": "Referer",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "LIB": {
+            "value": "https://there.shu.edu.cn/mobile/libseat"
+          },
+          "STATION": {
+            "value": "https://there.shu.edu.cn/mobile/seat2021"
+          },
+          "SEAT": {
+            "value": "https://there.shu.edu.cn/mobile/seat-mgr"
+          },
+          "CS": {
+            "value": "https://there.shu.edu.cn/mobile/csseat"
+          }
+        },
+        "description": "业务请求携带对应入口 Referer；是否参与服务器校验未验证。"
+      },
+      "OriginHeader": {
+        "name": "Origin",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "example": "https://there.shu.edu.cn",
+        "description": "实际创建、取消、提前结束请求携带。普通浏览器会自行控制该头；是否参与服务器校验未验证。"
+      },
+      "LanguageCookie": {
+        "name": "HYS_LANG",
+        "in": "cookie",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "examples": [
+            "zh"
+          ]
+        },
+        "description": "捕获 Cookie 名称；语言值见页面 lang。"
+      },
+      "BookingId": {
+        "name": "bookingId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "来自创建响应 data[0].id 或 recent.data[].id，是预约 ID，不是座位资源 ID。示例为脱敏别名。",
+        "example": "BOOKING_LIB"
+      },
+      "AreaId": {
+        "name": "areaId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "来自区域列表 data[].id 或 rooms[].officeAreaId。",
+        "example": "KRdcGiyK99gzrqCepi91Cv"
+      },
+      "Day": {
+        "name": "day",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        },
+        "example": "2026-10-03",
+        "description": "捕获格式 YYYY-MM-DD；每次 overview 调用均携带，省略行为未验证。",
+        "x-observed-in-all-matching-requests": true
+      },
+      "Begin": {
+        "name": "begin",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "dateOnly": {
+            "value": "2026-10-03"
+          },
+          "withTime": {
+            "value": "2026-10-03 08:30"
+          }
+        },
+        "description": "本次 YYYY-MM-DD 或 YYYY-MM-DD HH:mm，使用 Asia/Shanghai。应以标准 URL 编码传输空格。省略行为未验证。"
+      },
+      "End": {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "dateOnly": {
+            "value": "2026-10-03"
+          },
+          "withTime": {
+            "value": "2026-10-03 09:30"
+          }
+        },
+        "description": "本次格式同 begin。仅选择开始时间的中间请求出现 begin 含时间而 end 只有日期，不能把这种 UI 中间状态当作最终预约区间。"
+      },
+      "ShowChecks": {
+        "name": "showChecks",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        },
+        "example": true,
+        "description": "图书馆、24H 的详情请求使用 true，另两类未使用。仅与 checkins 字段出现有关联，未验证独立效果。"
+      },
+      "RequestIdHeader": {
+        "name": "Request-Id",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "POC 密码登录每次生成 UUID；是否服务端必需未知。"
+      },
+      "OAuthCode": {
+        "name": "code",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "writeOnly": true
+        },
+        "example": "REDACTED_AUTHORIZATION_CODE",
+        "description": "SSO 授权返回的一次性 code；同一路径不带 code 时也是登录入口。48 位只是项目所述样本长度，不设成恒定格式。"
+      }
+    },
+    "securitySchemes": {
+      "HysSession": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-hys-session",
+        "description": "值取自当前页面 HTML 的 sessionId。四个入口的值存在差异；不等于 Cookie 原始值。此方案描述成功样本的携带方式，未验证服务器最低认证要求。 HAR 中它是 HS512/DEF 形式的令牌，解码只核对结构和用户关联，未验证签名；不能直接用 Cookie 内的 utoken 替代。"
+      },
+      "SphysSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "SPHYS_SESSION",
+        "description": "成功样本携带的会话 Cookie，未验证与其他认证字段的独立作用。"
+      },
+      "AuthenticityToken": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "authenticityToken",
+        "description": "成功样本携带的 Cookie；不据名称直接断定其为 CSRF 验证机制。 项目文档将它描述为 CSRF Cookie；本次 HAR 没有验证其校验机制。"
+      },
+      "SsoSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "SHU_OAUTH2",
+        "description": "项目文档与 POC 复用的 SSO Cookie，与 there 的 SPHYS_SESSION 分属不同服务。按 Cookie 实际 domain/host 使用；项目声称 oauth 与 newsso 后端互通不等于两个域的 Cookie 可直接替换。"
+      }
+    }
+  },
+  "x-analysis": {
+    "mode": "offline_har_and_repository_sources",
+    "capture_date_shanghai": "2026-10-03",
+    "timezone": "Asia/Shanghai",
+    "source_files": [
+      {
+        "name": "校本部图书馆预约.har",
+        "bytes": 1335748,
+        "sha256": "7516ed730fb70270612a9d088fc7b9e015d84dc4f8dc862089e858b9a60605e9",
+        "har_entries": 80,
+        "target_host_entries": 36,
+        "api_entries": 31,
+        "page_entry": 69,
+        "capture_start_shanghai": "2026-10-03T00:25:25.586+08:00",
+        "capture_end_shanghai": "2026-10-03T00:26:51.670+08:00"
+      },
+      {
+        "name": "24H学习空间预约.har",
+        "bytes": 2730469,
+        "sha256": "3dc6b69d77bf7bb107e041a174bc24f9549cce0a9b18bed14b4dcb5f3c239f2b",
+        "har_entries": 120,
+        "target_host_entries": 16,
+        "api_entries": 14,
+        "page_entry": 39,
+        "capture_start_shanghai": "2026-10-03T00:31:26.490+08:00",
+        "capture_end_shanghai": "2026-10-03T00:32:36.707+08:00"
+      },
+      {
+        "name": "延长智能中心预约.har",
+        "bytes": 578183,
+        "sha256": "eb75c19e26f51151116e9330e1dc6fe9eb0bc3abd102eec3a85f064bc7e0713b",
+        "har_entries": 77,
+        "target_host_entries": 21,
+        "api_entries": 18,
+        "page_entry": 67,
+        "capture_start_shanghai": "2026-10-03T00:33:38.290+08:00",
+        "capture_end_shanghai": "2026-10-03T00:34:27.722+08:00"
+      },
+      {
+        "name": "科学与艺术中心预约.har",
+        "bytes": 529734,
+        "sha256": "665607ed11bd0723468c8d3222783ff45755a363b6e0ece4cbed5e66eb218198",
+        "har_entries": 70,
+        "target_host_entries": 28,
+        "api_entries": 27,
+        "page_entry": 64,
+        "capture_start_shanghai": "2026-10-03T00:35:01.664+08:00",
+        "capture_end_shanghai": "2026-10-03T00:35:59.377+08:00"
+      }
+    ],
+    "shared_service_evidence": {
+      "same_profile_id": true,
+      "same_corp_id": true,
+      "same_roles": true,
+      "same_x_hys_session": false,
+      "same_cookies_by_name": {
+        "SPHYS_SESSION": false,
+        "authenticityToken": false,
+        "HYS_LANG": true
+      }
+    },
+    "request_capture_count": 90,
+    "business_http_200_count": 90,
+    "business_rejection_count": 4,
+    "no_domain_requests": true,
+    "scope_note": "超星支线属于另一个主机/服务，不加入本统一 there API 服务。",
+    "repository": {
+      "url": "https://github.com/preca-hoshino/shu-sso-poc",
+      "commit": "941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b",
+      "commit_time_shanghai": "2026-10-03T01:10:52+08:00",
+      "sources": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+          "lines": 71
+        },
+        {
+          "path": "systems/there.shu.edu.cn/config.py",
+          "sha256": "98c75083b3c534524f4dcb8cab13a79a29753dfa3c8409e248fdef61d0ed787d",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/config.py",
+          "lines": 20
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py",
+          "lines": 285
+        },
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py",
+          "lines": 32
+        },
+        {
+          "path": "src/runner.py",
+          "sha256": "4270b2e6b66b09a8b1efb1ef48615f5cf36639f567cfda4d1a0f61efaf80169c",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/runner.py",
+          "lines": 123
+        },
+        {
+          "path": "src/utils.py",
+          "sha256": "cadae7db2a1a5c4a1a183d9b00c6278c0955b4d67c83df0c2374ccb9c123cc6c",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/utils.py",
+          "lines": 71
+        },
+        {
+          "path": "src/entry_password.py",
+          "sha256": "a3e4971015c23c6da9400fab8f0cf9c9092fcaff1a1743c6d85e69e63cb0dab3",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/entry_password.py",
+          "lines": 119
+        },
+        {
+          "path": "src/rsa_key.py",
+          "sha256": "ea823b6d0ee45ce63be4f3e82b1db2c00de9fe4d6955c812e7d42d34e421cd20",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/rsa_key.py",
+          "lines": 117
+        },
+        {
+          "path": "README.md",
+          "sha256": "5744f9c1e57b76877774e7b102dc75f3fe81f48ed0a9fb13b47fc38d4ac222ba",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/README.md",
+          "lines": 626
+        }
+      ],
+      "code_executed": false,
+      "login_attempts_performed": 0
+    },
+    "login_bridge_evidence": [
+      {
+        "file": "24H学习空间预约.har",
+        "api_requests": 14,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 1,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "24H学习空间预约.har#1",
+          "24H学习空间预约.har#2",
+          "24H学习空间预约.har#9",
+          "24H学习空间预约.har#12",
+          "24H学习空间预约.har#13",
+          "24H学习空间预约.har#14",
+          "24H学习空间预约.har#15",
+          "24H学习空间预约.har#16",
+          "24H学习空间预约.har#21",
+          "24H学习空间预约.har#27",
+          "24H学习空间预约.har#35",
+          "24H学习空间预约.har#36",
+          "24H学习空间预约.har#37",
+          "24H学习空间预约.har#38"
+        ]
+      },
+      {
+        "file": "延长智能中心预约.har",
+        "api_requests": 18,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 2,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "延长智能中心预约.har#2",
+          "延长智能中心预约.har#3",
+          "延长智能中心预约.har#18",
+          "延长智能中心预约.har#20",
+          "延长智能中心预约.har#23",
+          "延长智能中心预约.har#25",
+          "延长智能中心预约.har#26",
+          "延长智能中心预约.har#27",
+          "延长智能中心预约.har#28",
+          "延长智能中心预约.har#32",
+          "延长智能中心预约.har#41",
+          "延长智能中心预约.har#42",
+          "延长智能中心预约.har#44",
+          "延长智能中心预约.har#45",
+          "延长智能中心预约.har#52",
+          "延长智能中心预约.har#53",
+          "延长智能中心预约.har#63",
+          "延长智能中心预约.har#64"
+        ]
+      },
+      {
+        "file": "校本部图书馆预约.har",
+        "api_requests": 31,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 4,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "校本部图书馆预约.har#4",
+          "校本部图书馆预约.har#5",
+          "校本部图书馆预约.har#12",
+          "校本部图书馆预约.har#14",
+          "校本部图书馆预约.har#17",
+          "校本部图书馆预约.har#19",
+          "校本部图书馆预约.har#20",
+          "校本部图书馆预约.har#21",
+          "校本部图书馆预约.har#22",
+          "校本部图书馆预约.har#26",
+          "校本部图书馆预约.har#27",
+          "校本部图书馆预约.har#29",
+          "校本部图书馆预约.har#30",
+          "校本部图书馆预约.har#31",
+          "校本部图书馆预约.har#33",
+          "校本部图书馆预约.har#34",
+          "校本部图书馆预约.har#35",
+          "校本部图书馆预约.har#37",
+          "校本部图书馆预约.har#38",
+          "校本部图书馆预约.har#39",
+          "校本部图书馆预约.har#40",
+          "校本部图书馆预约.har#41",
+          "校本部图书馆预约.har#47",
+          "校本部图书馆预约.har#53",
+          "校本部图书馆预约.har#54",
+          "校本部图书馆预约.har#55",
+          "校本部图书馆预约.har#56",
+          "校本部图书馆预约.har#57",
+          "校本部图书馆预约.har#66",
+          "校本部图书馆预约.har#67",
+          "校本部图书馆预约.har#68"
+        ]
+      },
+      {
+        "file": "科学与艺术中心预约.har",
+        "api_requests": 27,
+        "all_cookies_contain_utoken": true,
+        "all_utokens_equal_header": false,
+        "all_header_payloads_contain_profile_id": true,
+        "all_header_sub_matches_profile": true,
+        "all_cookie_sub_matches_profile": true,
+        "signatures_verified": false,
+        "structural_sample": {
+          "entry": 2,
+          "cookie_contains_utoken": true,
+          "utoken_equals_x_hys_session": false,
+          "cookie_parameter_names": [
+            "<session-prefix>-ct",
+            "onlyShowAreaId",
+            "___TS",
+            "utoken"
+          ],
+          "header_token_algorithm_unverified": "HS512",
+          "header_token_zip": "DEF",
+          "header_token_payload_type": "dict",
+          "header_payload_contains_profile_id": true,
+          "header_sub_matches_profile": true,
+          "cookie_sub_matches_profile": true,
+          "header_token_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ],
+          "cookie_utoken_algorithm_unverified": "HS512",
+          "cookie_utoken_claim_key_names": [
+            "sub",
+            "aud",
+            "exp"
+          ]
+        },
+        "evidence": [
+          "科学与艺术中心预约.har#2",
+          "科学与艺术中心预约.har#3",
+          "科学与艺术中心预约.har#17",
+          "科学与艺术中心预约.har#22",
+          "科学与艺术中心预约.har#23",
+          "科学与艺术中心预约.har#24",
+          "科学与艺术中心预约.har#25",
+          "科学与艺术中心预约.har#26",
+          "科学与艺术中心预约.har#27",
+          "科学与艺术中心预约.har#28",
+          "科学与艺术中心预约.har#29",
+          "科学与艺术中心预约.har#30",
+          "科学与艺术中心预约.har#31",
+          "科学与艺术中心预约.har#32",
+          "科学与艺术中心预约.har#33",
+          "科学与艺术中心预约.har#34",
+          "科学与艺术中心预约.har#35",
+          "科学与艺术中心预约.har#36",
+          "科学与艺术中心预约.har#38",
+          "科学与艺术中心预约.har#41",
+          "科学与艺术中心预约.har#42",
+          "科学与艺术中心预约.har#46",
+          "科学与艺术中心预约.har#47",
+          "科学与艺术中心预约.har#51",
+          "科学与艺术中心预约.har#60",
+          "科学与艺术中心预约.har#61",
+          "科学与艺术中心预约.har#62"
+        ]
+      }
+    ],
+    "network_scope": "只读取 GitHub 与 OpenAPI 标准，未访问 there / newsso / oauth / 企业微信登录服务",
+    "operation_counts": {
+      "observed_request": 13,
+      "javascript_reference": 2,
+      "repo_reference": 11
+    },
+    "business_api_operation_count": 13,
+    "known_url_only_references": 7
+  },
+  "x-evidence-levels": {
+    "observed_request": "本次 HAR 内有实际请求与响应。",
+    "javascript_reference": "HAR 自带脚本有直接调用或导航记录，没有本次实际响应。",
+    "repo_reference": "shu-sso-poc 固定提交明确记载或实现对应方法和路径，没有本次实际响应。"
+  },
+  "x-resource-types": [
+    {
+      "value": "ROOM",
+      "name": "空间",
+      "evidence_level": "html_configuration_only",
+      "page_entry": null
+    },
+    {
+      "value": "SEAT",
+      "name": "工位",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/seat-mgr"
+    },
+    {
+      "value": "SEAT2",
+      "name": "环化学院工位",
+      "evidence_level": "html_configuration_only",
+      "page_entry": null
+    },
+    {
+      "value": "STATION",
+      "name": "24小时座位",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/seat2021"
+    },
+    {
+      "value": "STATION2",
+      "name": "办公室工位",
+      "evidence_level": "html_configuration_only",
+      "page_entry": null
+    },
+    {
+      "value": "LIB_SEAT",
+      "name": "图书馆自修区",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/libseat"
+    },
+    {
+      "value": "CS_SEAT",
+      "name": "交流展示中心",
+      "evidence_level": "observed_request",
+      "page_entry": "/mobile/csseat"
+    }
+  ],
+  "x-source-evidence-convention": "文件名#N：原始 HAR log.entries[N-1]；offset 为解码后 JS 文本的字符下标。",
+  "x-redaction": "会话值、用户名、学号、联系方式和签到令牌不随规范分发；真实预约 ID 使用稳定别名。",
+  "x-unknowns": [
+    "跨入口会话是否可替换",
+    "所有类型是否共用相同参数规则",
+    "未访问区域和未抓到的 JS 主文件",
+    "未捕获的响应码与重试/幂等行为",
+    "每个移动入口从未登录状态开始的实际跳转及真正签到条件",
+    "项目描述的 OAuth/state/CSRF 校验是否仍适用",
+    "v2 路由的真实 HTTP 方法、参数和响应"
+  ],
+  "x-not-promoted-to-operations": [
+    {
+      "source": "HTML capabilities and configuration",
+      "known": "存在编辑、成员、评论、分享、固定预约或代预约等能力/配置字段。",
+      "contract": "没有直接方法与路径证据的功能不列为接口。"
+    },
+    {
+      "source": "legacy apiServiceHost default",
+      "known": "脚本默认值包含 hyshi.bayrand.com/api/v2.0。",
+      "contract": "不是本次 there 实际业务请求的服务器地址。"
+    },
+    {
+      "source": "repository OAuth description",
+      "known": "项目描述后端换 token。",
+      "contract": "后端实际交换请求、client secret 与完整载荷未提供。"
+    }
+  ],
+  "x-resource-surface-versions": {
+    "/api/v3": "90 次 HAR 业务请求，来自四个移动入口",
+    "/api/v2.0": "项目只记载路径名；HTTP 方法、参数与响应未知，未纳入 paths 操作。"
+  },
+  "x-client-side-routes": [
+    {
+      "path": "/web/home",
+      "source": {
+        "path": "systems/there.shu.edu.cn/README.md",
+        "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+        "lines": 71
+      },
+      "reason": "仅描述 SPA 导航，不声称存在独立 HTTP API 操作"
+    }
+  ],
+  "x-public-static-pages": [
+    {
+      "path": "/shu",
+      "source": {
+        "path": "systems/there.shu.edu.cn/README.md",
+        "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+        "lines": 71
+      },
+      "role": "项目描述的静态介绍页面，不作为已登录成功标志，也不加入业务 API 列表"
+    },
+    {
+      "path": "/shu/booking.html",
+      "source": {
+        "path": "systems/there.shu.edu.cn/README.md",
+        "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+        "lines": 71
+      },
+      "role": "项目描述的静态介绍页面，不作为已登录成功标志，也不加入业务 API 列表"
+    },
+    {
+      "path": "/shu/rule.html",
+      "source": {
+        "path": "systems/there.shu.edu.cn/README.md",
+        "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+        "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md",
+        "lines": 71
+      },
+      "role": "项目描述的静态介绍页面，不作为已登录成功标志，也不加入业务 API 列表"
+    }
+  ],
+  "x-authentication-workflow": {
+    "source_scope": "项目 primarily documents Web there login; connecting it to each mobile bootstrap is supported by shared site session and JS /login target, not a newly captured seamless end-to-end login trace",
+    "entry": {
+      "operationId": "openLoginPage",
+      "parameter": "from=web",
+      "documented_alternative": "handleThereOAuthCallback without code"
+    },
+    "authentication_alternatives": {
+      "password": {
+        "operations": [
+          "openSsoLoginPage",
+          "ssoPasswordLogin",
+          "ssoSendTwoStepCode",
+          "ssoVerifyTwoStepCode"
+        ],
+        "two_step_condition": "twoStepRequired=true",
+        "result_cookie": "SHU_OAUTH2"
+      },
+      "wecom": {
+        "operations": [
+          "wecomOpenLoginQr",
+          "wecomPollLoginQr",
+          "ssoRedeemWecomCode"
+        ],
+        "browser_transport_alternative": "wecomBrowserLoginQrPoll",
+        "result_cookie": "SHU_OAUTH2"
+      }
+    },
+    "authorization": {
+      "operationId": "ssoAuthorizeThere",
+      "client_profile": {
+        "client_id": "eDrd-M0i0WoSWRxk7ShDC1n-fbS7jRvi",
+        "redirect_uri": "https://there.shu.edu.cn/login-oauth2",
+        "scope": "1"
+      }
+    },
+    "site_session": {
+      "operationId": "handleThereOAuthCallback",
+      "cookie_names": [
+        "SPHYS_SESSION",
+        "authenticityToken"
+      ],
+      "landing_operation": "openThereWebLanding",
+      "spa_route": "/web/home"
+    },
+    "mobile_bridge": {
+      "observed_operations": [
+        "openLIBPage",
+        "openSTATIONPage",
+        "openSEATPage",
+        "openCSPage"
+      ],
+      "bootstrap_header_relation": "HTML.sessionId equals x-hys-session",
+      "site_cookie_utoken_relation": "90 captured requests include utoken, but it does not equal x-hys-session; signature not verified"
+    },
+    "reservation": {
+      "operations": [
+        "getCurrentProfile",
+        "getRecentBookings",
+        "getBookingOverview",
+        "listBookingAreas",
+        "getAreaBookingStatus",
+        "createBooking",
+        "getBookingDetail",
+        "cancelBooking",
+        "finishBooking"
+      ],
+      "business_success": "JSON.code=0 in captured samples"
+    },
+    "desktop_other_surface": {
+      "paths": [
+        "/api/v2.0/my-meetings",
+        "/api/v2.0/settings",
+        "/api/v2.0/my-stats"
+      ],
+      "schema": "unknown; not v3 bookings aliases"
+    }
+  },
+  "x-url-references": [
+    {
+      "path": "/api/v2.0/my-meetings",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目文档列出路径，HTTP 方法、参数和返回体未提供。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L44",
+          "lines": 71,
+          "line": 44
+        }
+      ]
+    },
+    {
+      "path": "/api/v2.0/settings",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目文档列出路径，HTTP 方法、参数和返回体未提供。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L44",
+          "lines": 71,
+          "line": 44
+        }
+      ]
+    },
+    {
+      "path": "/api/v2.0/my-stats",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目文档列出路径，HTTP 方法、参数和返回体未提供。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "systems/there.shu.edu.cn/README.md",
+          "sha256": "d1b568e31175f75f283d58b869f3b08d42e89c51770ea4c88982c45703b9a3d9",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md#L44",
+          "lines": 71,
+          "line": 44
+        }
+      ]
+    },
+    {
+      "path": "/api/room/qrcode/meeting/{bookingId}.png",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "response_url",
+      "note": "预约详情返回 qrCodeUrl，仅确认 URL。",
+      "evidence": [
+        {
+          "source": "校本部图书馆预约.har#12",
+          "field": "data.qrCodeUrl"
+        },
+        {
+          "source": "24H学习空间预约.har#9",
+          "field": "data.qrCodeUrl"
+        },
+        {
+          "source": "延长智能中心预约.har#18",
+          "field": "data.qrCodeUrl"
+        },
+        {
+          "source": "科学与艺术中心预约.har#17",
+          "field": "data.qrCodeUrl"
+        }
+      ],
+      "repository_evidence": []
+    },
+    {
+      "path": "/m/b/{bookingId}/c/{checkinToken}",
+      "servers": [
+        {
+          "url": "https://there.shu.edu.cn",
+          "description": "HAR 中实际使用的主机；生成期间没有访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "response_url",
+      "note": "预约详情返回 qrCodeValue，仅确认 URL。",
+      "evidence": [
+        {
+          "source": "校本部图书馆预约.har#12",
+          "field": "data.qrCodeValue"
+        },
+        {
+          "source": "24H学习空间预约.har#9",
+          "field": "data.qrCodeValue"
+        },
+        {
+          "source": "延长智能中心预约.har#18",
+          "field": "data.qrCodeValue"
+        },
+        {
+          "source": "科学与艺术中心预约.har#17",
+          "field": "data.qrCodeValue"
+        }
+      ],
+      "repository_evidence": []
+    },
+    {
+      "path": "/wwopen/sso/qrImg",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目代码构造 qr_img_url，没有对应请求调用。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L20",
+          "lines": 32,
+          "line": 20
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L195",
+          "lines": 285,
+          "line": 195
+        }
+      ]
+    },
+    {
+      "path": "/wwopen/sso/confirm2",
+      "servers": [
+        {
+          "url": "https://open.work.weixin.qq.com",
+          "description": "企微登录协议主机；本次未访问"
+        }
+      ],
+      "method": "unknown",
+      "parameters_and_response": "unknown except URL components explicitly shown by source",
+      "source_level": "repo_reference",
+      "note": "项目代码构造 confirm_url，没有对应请求调用。",
+      "evidence": [],
+      "repository_evidence": [
+        {
+          "path": "src/config.py",
+          "sha256": "0170f0cea2bd8d15b402f289786dc623e57b05967dcb8a8b8ec198a98c63f11f",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/config.py#L21",
+          "lines": 32,
+          "line": 21
+        },
+        {
+          "path": "src/client.py",
+          "sha256": "c38b4573c05a58e1c028d6670ef870c461ec5f2fccbf94d91a28222bec263c18",
+          "url": "https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py#L195",
+          "lines": 285,
+          "line": 195
+        }
+      ]
+    }
+  ]
+}

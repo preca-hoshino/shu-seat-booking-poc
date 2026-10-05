@@ -1,0 +1,3 @@
+[submodule "vendor/shu-sso-poc"]
+	path = vendor/shu-sso-poc
+	url = https://github.com/preca-hoshino/shu-sso-poc.git
