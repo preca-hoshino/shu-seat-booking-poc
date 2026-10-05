@@ -153,7 +153,7 @@ python tests/test_offline.py        # 捕获契约、解析、请求组装、脱
 python tests/test_e2e_mock.py       # 模拟四类预约、详情与取消 / 结束
 python tests/test_auth_mock.py      # 模拟密码 / 2FA / 扫码、OAuth 与 CLI
 python tests/test_chaoxing_offline.py   # 超星：签名向量、提交 / 取消、凭据与换会话
-# 或一次运行全部 58 项测试
+# 或一次运行全部 60 项测试
 python -m unittest discover -s tests -v
 python login.py --check                         # 在线复探两套凭据
 python login.py --check --system chaoxing       # 只复探超星

@@ -119,6 +119,50 @@ class AuthIntegrationTests(OfflineCase):
         self.assertEqual(result["reason"], "unsafe_callback_redirect")
         self.assertEqual(len(self.wire.calls), 3)
 
+    def test_http_callback_redirect_is_upgraded_to_https(self):
+        """实测：/login-oauth2 成功后 302 到 http://there.shu.edu.cn/web?authJump=…（同站 http）。
+        跟随前必须升级为 https（不向明文地址发请求），域与路径校验不变。"""
+        client = self.client()
+        self.plan_exchange(client,
+                           callback_location="http://there.shu.edu.cn/web?authJump=fixture-jump")
+
+        def inspect_upgrade(request, kwargs):
+            self.assertTrue(request.url.startswith("https://there.shu.edu.cn/web"))
+            self.assertIn("authJump=fixture-jump", request.url)
+
+        self.wire.add("GET", "/web", "<html>合成业务落地页</html>", inspect=inspect_upgrade)
+        self.wire.add("GET", PAGES["LIB_SEAT"], page_html())
+        self.wire.add("GET", "/api/v3/my/profile", PROFILE)
+        with redirect_stdout(StringIO()):
+            result = login_all_systems(client)["there"]
+        self.assertTrue(result["logged_in"])
+        self.assertTrue(all(request.url.startswith("https://")
+                            for request, _ in self.wire.calls))
+
+    def test_main_landing_variant_is_followed(self):
+        """实测（带 state 的项目流程）：回调 302 到 http://there.shu.edu.cn/main?authJump=…，
+        再 302 到 /web 落地；两跳都必须升 https 且依次跟随。"""
+        client = self.client()
+        self.plan_exchange(client,
+                           callback_location="http://there.shu.edu.cn/main?authJump=fixture-jump")
+
+        def inspect_main(request, kwargs):
+            self.assertTrue(request.url.startswith("https://there.shu.edu.cn/main"))
+
+        def inspect_web(request, kwargs):
+            self.assertEqual(request.url, "https://there.shu.edu.cn/web")
+
+        self.wire.add("GET", "/main", "", status=302,
+                      headers={"Location": "https://there.shu.edu.cn/web"}, inspect=inspect_main)
+        self.wire.add("GET", "/web", "<html>合成业务落地页</html>", inspect=inspect_web)
+        self.wire.add("GET", PAGES["LIB_SEAT"], page_html())
+        self.wire.add("GET", "/api/v3/my/profile", PROFILE)
+        with redirect_stdout(StringIO()):
+            result = login_all_systems(client)["there"]
+        self.assertTrue(result["logged_in"])
+        self.assertTrue(all(request.url.startswith("https://")
+                            for request, _ in self.wire.calls))
+
     def test_anonymous_profile_cannot_generate_credentials(self):
         client = self.client()
         profile = copy.deepcopy(PROFILE)

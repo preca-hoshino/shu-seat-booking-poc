@@ -195,13 +195,13 @@ GET https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=eDrd-
 
 授权成功返回 302 Location 指向 there/login-oauth2 并携带 code。若 Location 包含 /oauth2/login/，项目视为 SSO 会话不可用。302 本身不是授权成功标志，应检查回调目标和 code。
 
-沿返回的回调地址访问 **GET there/login-oauth2?code=...**，并使用已初始化的本站 Cookie jar。项目描述成功时更新 SPHYS_SESSION/authenticityToken，302 到 `/web?authJump=...`，之后 307→200，SPA 导航 `/web/home`。这些页面不返回预约 API 的 JSON envelope。
+沿返回的回调地址访问 **GET there/login-oauth2?code=...**，并使用已初始化的本站 Cookie jar。项目 2026-10-05 复测记录：成功时更新 SPHYS_SESSION/authenticityToken，并 302 到同站**明文 http** 地址 —— 不带 state 直接授权时为 `http://there.shu.edu.cn/web?authJump=...`；经 `/login?from=web` 预置、带 state 发起时为 `http://there.shu.edu.cn/main?authJump=...`，再由 302 到 `/web`。明文地址由 http 侧 307 升到 https 后返回 200；项目实现不向明文地址发请求，而是把同站 http 地址升级为 https 后再跟随。这些页面不返回预约 API 的 JSON envelope。
 
 | 本站路由 | 参数 | 项目记录的返回 |
 | --- | --- | --- |
 | GET /login | from=web | 302 至 SSO 授权，并预置本站会话 Cookie。 |
-| GET /login-oauth2 | 入口可不带 code；回调带 code，state 取对应上下文 | 成功回调 302 至 /web；坏 code 一种表现为 HTTP 200 空正文。 |
-| GET /web | authJump，值来自回调 Location | 成功落地链 307→200 HTML；未登录 Web 入口可转 /login?from=web。 |
+| GET /login-oauth2 | 入口可不带 code；回调带 code，state 取对应上下文 | 成功回调 302 至同站 http 的 `/web?authJump=...` 或 `/main?authJump=...`；坏 code 一种表现为 HTTP 200 空正文。 |
+| GET /web | authJump，值来自回调 Location（或经 /main 转入） | 成功落地 200 HTML；未登录 Web 入口可转 /login?from=web。 |
 
 登录完成判据设计：先核对回调落地 /web 与页面特征，再进入选定移动页面获取登录用户/sessionId，最后用 profile.code=0 且非匿名的用户信息确认业务会话。/shu、/shu/booking.html、/shu/rule.html 是项目所述公开介绍页，不作为登录成功判据。仅 HTTP 200 或仅 URL 含 there 域名都不足以排除空回调失败。
 

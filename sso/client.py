@@ -9,7 +9,8 @@ from src.client import ShuSSO as _UpstreamShuSSO
 from . import config, rsa_key
 
 _TRACE_FIELDS = {"http_status", "status", "ok", "needs_login", "reason",
-                 "logged_in", "system", "method", "cookie_count"}
+                 "logged_in", "system", "method", "cookie_count", "upgraded",
+                 "target", "path"}
 
 
 class ShuSSO(_UpstreamShuSSO):

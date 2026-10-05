@@ -63,7 +63,7 @@ HTML 中资源类型共七项：ROOM 空间、SEAT 工位、SEAT2 环化学院�
 | OAuth code | /oauth/authorize 的 Location | 传给 there/login-oauth2，按本次授权结果使用。 |
 | SPHYS_SESSION | there 回调写入或更新 | 项目描述其中携带 utoken。 |
 | authenticityToken | there 回调下发 | 本站 Cookie，不与 SHU_OAUTH2 混用。 |
-| authJump | there 成功落地 /web 的查询参数 | 不是 API 的 x-hys-session。 |
+| authJump | there 成功落地 /web 的查询参数（另见 /main → /web 形态） | 不是 API 的 x-hys-session。 |
 | HTML.sessionId | /mobile/* 的页面引导数据 | 是业务头 x-hys-session 的来源。 |
 
 离线检查显示，90 次请求的 SPHYS_SESSION 中 utoken 和 x-hys-session 均为声明 HS512、DEF 压缩的 JWT 形状；解码字段名为 sub/aud/exp，两者 sub 均对应 profile.data.id，但令牌字符串不同。本次没有验证签名、输出实际 claims 或调用令牌。该关系支持同用户关联，不能把 utoken 直接填到 x-hys-session。

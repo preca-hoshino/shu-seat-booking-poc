@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import parse_qs, urljoin, urlparse
+from urllib.parse import parse_qs, urljoin, urlparse, urlunparse
 
 from seat.there.config import LOCAL_TZ
 
@@ -39,6 +39,42 @@ def _origin_url(url: str, hostname: str) -> bool:
     parsed = urlparse(url)
     return (parsed.scheme == "https" and parsed.hostname == hostname
             and parsed.port in (None, 443) and not parsed.username and not parsed.password)
+
+
+def _sanitize_url(url: str) -> str:
+    """仅保留 scheme://host[:port]/path 供 trace 记录（query 可能含一次性凭据，一律不落）。"""
+    if not url:
+        return ""
+    parsed = urlparse(url)
+    port = f":{parsed.port}" if parsed.port else ""
+    return f"{parsed.scheme}://{parsed.hostname or '?'}{port}{parsed.path or ''}"
+
+
+def _callback_target(current: str, location: str) -> tuple[str, bool] | None:
+    """回调 302 的 Location → 可安全跟随的 https URL；不合规返回 None。
+
+    实测（2026-10-05）站内有**两种合法落地形态**，都先返回明文 http 地址：
+    - 带 state（经 /login?from=web 预置）发起：/main?authJump=… → 302 → /web；
+    - 不带 state 直接授权：/web?authJump=…。
+    同站 http 降级地址直接升级为 https 再跟随 —— 不向明文地址发请求（Cookie 不出网）；
+    「同域 + 允许路径」两道校验保持不放宽。
+    """
+    if not location:
+        return None
+    target = urljoin(current, location)
+    parsed = urlparse(target)
+    upgraded = False
+    if (parsed.scheme == "http" and parsed.hostname == "there.shu.edu.cn"
+            and parsed.port in (None, 80)):
+        target = urlunparse(parsed._replace(scheme="https", netloc="there.shu.edu.cn"))
+        parsed = urlparse(target)
+        upgraded = True
+    if not _origin_url(target, "there.shu.edu.cn"):
+        return None
+    if not (parsed.path == "/web" or parsed.path.startswith("/web/")
+            or parsed.path == "/main"):
+        return None
+    return target, upgraded
 
 
 def _there_headers() -> dict:
@@ -79,24 +115,28 @@ def _prewarm(client: ShuSSO, cfg: dict) -> str:
 
 
 def _callback(client: ShuSSO, location: str) -> dict:
-    """严格控制回调跳转域/路径；HTTP 200 空正文不是登录成功。"""
+    """严格控制回调跳转域/路径（同站 http 降级升级为 https 后跟随）；HTTP 200 空正文不是登录成功。"""
     response = client.sess.get(location, headers=_there_headers(),
                                allow_redirects=False, timeout=client.timeout)
-    client.record("callback/there", {"http_status": response.status_code})
+    client.record("callback/there", {"http_status": response.status_code,
+                                     "target": _sanitize_url(
+                                         urljoin(location, response.headers.get("Location", "")))})
     if response.status_code not in _REDIRECT_STATUSES:
         return fail("callback_not_redirected", http_status=response.status_code)
     current = location
     for _ in range(8):
-        next_url = urljoin(current, response.headers.get("Location", ""))
-        parsed = urlparse(next_url)
-        if (not response.headers.get("Location")
-                or not _origin_url(next_url, "there.shu.edu.cn")
-                or not (parsed.path == "/web" or parsed.path.startswith("/web/"))):
+        target = _callback_target(current, response.headers.get("Location", ""))
+        if target is None:
+            client.record("callback/rejected", {
+                "http_status": response.status_code,
+                "target": _sanitize_url(urljoin(current, response.headers.get("Location", "")))})
             return fail("unsafe_callback_redirect", http_status=response.status_code)
-        current = next_url
+        current, upgraded = target
         response = client.sess.get(current, headers=_there_headers(),
                                    allow_redirects=False, timeout=client.timeout)
-        client.record("landing/there", {"http_status": response.status_code})
+        client.record("landing/there", {"http_status": response.status_code,
+                                        "upgraded": upgraded,
+                                        "path": urlparse(current).path})
         if response.status_code in _REDIRECT_STATUSES:
             continue
         if response.status_code != 200 or not (response.text or "").strip():
@@ -104,7 +144,7 @@ def _callback(client: ShuSSO, location: str) -> dict:
         # URL/HTTP 在此仅是流程条件；真正的成功条件在 bootstrap + profile。
         return {"logged_in": False, "reason": "awaiting_profile_verification",
                 "http_status": response.status_code,
-                "final_url": config.THERE_BASE + parsed.path}
+                "final_url": config.THERE_BASE + urlparse(current).path}
     return fail("too_many_callback_redirects", http_status=response.status_code)
 
 
