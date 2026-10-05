@@ -47,18 +47,23 @@ flowchart TD
 | 延长智能中心 | `/mobile/seat-mgr` | `SEAT` |
 | 科学与艺术中心 | `/mobile/csseat` | `CS_SEAT` |
 
+另有一套并行的**超星（学习通）图书馆座位**系统（钱伟长馆 / 嘉定联合馆 / 延长文荟馆），
+入口、登录链与端点完全不同，用 `--system chaoxing` 使用，详见 [`docs/chaoxing.md`](docs/chaoxing.md)。
+
 | 文件 | 职责 |
 | :--- | :--- |
-| `login.py` | 认证 → 换本站会话 → 移动端 profile 校验 → 写出 `.credentials.json` |
-| `poc.py` | 读凭据 → 账号 / 预约 / 区域 / 座位查询，显式执行创建、取消或结束 |
-| `sso/` | 登录环节的薄适配层；统一身份认证实现在 git 子模块 [`vendor/shu-sso-poc/`](vendor/shu-sso-poc/) |
-| `seat/` | 移动页面会话解析、业务 HTTP 客户端、预约请求组装与脱敏 |
+| `login.py` | 统一认证 → 换两套会话（there + 超星）→ 各自验证 → 写出独立凭据文件 |
+| `poc.py` | `--system there` 四入口查询 / 创建 / 取消 / 结束；`--system chaoxing` 超星查询 / 签名创建 / 取消 |
+| `sso/` | 登录环节的薄适配层（含超星换会话接入）；统一身份认证实现在 git 子模块 [`vendor/shu-sso-poc/`](vendor/shu-sso-poc/) |
+| `seat/` | 座位业务包，下分两套系统：`seat/there/`（本校四入口）与 `seat/chaoxing/`（超星学习通） |
+| `seat/there/` | 本校：移动页面会话解析、业务 HTTP 客户端、预约请求组装、凭据与脱敏 |
+| `seat/chaoxing/` | 超星：enc 提交签名、HTTP 客户端与凭据（换会话在 vendor 子模块 `systems/chaoxing.com/`，经 `sso/` 接入） |
 | `tests/` | 离线单测与本地模拟登录 / 预约全链路 |
 | `docs/` | 全部明确来源的结论、字段、样例、链路、OpenAPI 与证据 |
 
 > 项目结构与文档风格参照 [shu-otp-poc](https://github.com/preca-hoshino/shu-otp-poc/tree/3108de766163a0b096221a4d2f8bb8ae075ee1cb)
 > 和 [shu-ds-poc](https://github.com/preca-hoshino/shu-ds-poc/tree/72475557d5d8529b553f89f56f789636601f98ba)。
-> SSO 子模块固定为 `941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b`，认证实现保持一份，本站适配独立放在 `sso/`。
+> SSO 子模块固定为 `9fa17843c00bdd633e89521f79ba90b711c62430`，认证与各系统换会话实现保持一份（含超星），本站适配独立放在 `sso/`。
 
 详细登录链、Cookie 与移动页面的衔接见 [`docs/login.md`](docs/login.md)。
 
@@ -95,10 +100,12 @@ pip install -r requirements.txt
 ### 使用
 
 ```bash
-# ① 登录，生成凭据（账号密码或企微扫码）
+# ① 登录，生成凭据（账号密码或企微扫码）；默认 --system both 一次认证换两套会话
 python login.py                    # 交互式选登录方式
 python login.py --login wecom_scan
 python login.py --login password --method wecom
+python login.py --system there     # 只登录 there（旧行为）
+python login.py --system chaoxing  # 只登录超星座位
 
 # ② 查询：默认只读账号与四类资源概览
 python poc.py
@@ -120,6 +127,16 @@ python poc.py --room-type LIB_SEAT book --area "<areaId>" --room "<roomId>" \
 python poc.py --room-type LIB_SEAT detail "<bookingId>" --show-checks
 python poc.py --room-type LIB_SEAT cancel "<bookingId>"
 python poc.py --room-type STATION finish "<bookingId>"
+
+# ⑤ 超星（学习通）图书馆座位：只能预约当天（07:00 开放），座位号为 3 位数字
+python poc.py --system chaoxing                                  # 只读概览（当前用户 + 预约）
+python poc.py --system chaoxing rooms --day 2026-10-05
+python poc.py --system chaoxing available --room 6508 --day 2026-10-05 \
+    --begin 21:00 --end 22:00
+python poc.py --system chaoxing book --room 6508 --day 2026-10-05 \
+    --begin 21:00 --end 22:00 --seat 135 --dry-run
+# 删除 --dry-run 才会真正提交（每次提交前自动重取签名盐）
+python poc.py --system chaoxing cancel "<reserveId>"
 ```
 
 上例多行使用 Bash 的 `\`；PowerShell 可写成一行。日期应按实际预约日调整，
@@ -135,9 +152,11 @@ python poc.py --room-type STATION finish "<bookingId>"
 python tests/test_offline.py        # 捕获契约、解析、请求组装、脱敏等离线测试
 python tests/test_e2e_mock.py       # 模拟四类预约、详情与取消 / 结束
 python tests/test_auth_mock.py      # 模拟密码 / 2FA / 扫码、OAuth 与 CLI
-# 或一次运行全部 34 项测试
+python tests/test_chaoxing_offline.py   # 超星：签名向量、提交 / 取消、凭据与换会话
+# 或一次运行全部 58 项测试
 python -m unittest discover -s tests -v
-python login.py --check            # 在线读取移动 profile，验证已有凭据
+python login.py --check                         # 在线复探两套凭据
+python login.py --check --system chaoxing       # 只复探超星
 ```
 
 离线测试与真实服务验证分别记录。本次开发环境无法访问目标域名，
@@ -152,6 +171,7 @@ python login.py --check            # 在线读取移动 profile，验证已有�
 | 文档 | 内容 |
 | :--- | :--- |
 | [`docs/login.md`](docs/login.md) | newsso 密码 / 二步 / 扫码、OAuth、Cookie 与移动会话衔接 |
+| [`docs/chaoxing.md`](docs/chaoxing.md) | 超星（学习通）座位：双链说明、13 个端点、enc 签名与服务端对照实验 |
 | [`docs/api.md`](docs/api.md) | 四系统九个实测业务端点，全部捕获参数 / 返回字段 / 样例，源码引用与未知方法记录 |
 | [`docs/booking.md`](docs/booking.md) | 一次完整预约的客户端设计、四条真实链路、八次创建尝试 |
 | [`docs/cli.md`](docs/cli.md) | `login.py` / `poc.py` 参数与命令用法 |
@@ -174,6 +194,8 @@ python login.py --check            # 在线读取移动 profile，验证已有�
 | 单用户提交频率限制 | 两个场馆实测提示“同一用户10秒只能提交一次”；创建超时或拒绝后先查询 recent，避免直接重复创建 |
 | 状态不单独决定操作 | 根据详情 `abilities` 判断操作；24H finish 后也返回 CANCEL，保留实际时间与 origEndAt |
 | 签到仅有源码证据 | `POST checkInUse` 只见图书馆脚本，未捕获实际请求 / 响应；`check-in --experimental` 是显式实验入口 |
+| 超星仅当天可约 | 实测次日 / 5 天后 select 页报“当前区域未到开放预约时间”；当天 07:00 开放 |
+| 超星签名盐每次刷新 | 提交前重新拉取 select 页取新盐；签名错误与超时同报 303，不做区分，一律重取重试 |
 | 快照不是实时占用 | 517 个资源来自四个选中区域，快照在创建后、取消 / 结束前；使用时必须重新查询 |
 | 未知方法保留未知 | v2 三个路径、二维码与签到页 URL 没有方法契约；不向其自动发请求，也没有加入编辑 / 评论等推测路由 |
 | 仅限个人学习研究 | 请遵守学校的信息系统使用规定与服务条款 |

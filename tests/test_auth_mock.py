@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from test_offline import (BASE, END, PAGES, PROFILE, START, OfflineCase,
                           area_envelope, page_html)
-from seat import credentials
+from seat.there import credentials
 from sso import config
 from sso.client import ShuSSO
 from sso.runner import login_all_systems, session_params
@@ -42,7 +42,9 @@ class AuthIntegrationTests(OfflineCase):
         self.stack.enter_context(patch.object(config, "CAPTURE_DIR", Path(self.temp.name) / "captures"))
 
     def args(self, room_type="LIB_SEAT"):
-        return login.build_parser().parse_args(["--out", str(self.path), "--room-type", room_type])
+        # 登录流程单测聚焦 there：显式固定 --system there（默认 both 会连带走超星换会话）。
+        return login.build_parser().parse_args(
+            ["--out", str(self.path), "--room-type", room_type, "--system", "there"])
 
     def plan_exchange(self, client, room_type="LIB_SEAT", callback_status=302,
                       callback_location="/web/index", profile=None):
@@ -220,7 +222,8 @@ class CliIntegrationTests(OfflineCase):
         before = self.path.read_bytes()
         self.wire.add("GET", PAGES["LIB_SEAT"], "", status=302,
                       headers={"Location": "https://newsso.shu.edu.cn/oauth2/login/"})
-        args = login.build_parser().parse_args(["--check", "--out", str(self.path)])
+        args = login.build_parser().parse_args(["--check", "--out", str(self.path),
+                                                "--system", "there"])
         with redirect_stdout(StringIO()):
             self.assertEqual(login.check_flow(args), 6)
         self.assertEqual(self.path.read_bytes(), before)

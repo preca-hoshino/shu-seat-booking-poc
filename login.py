@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""统一身份认证 → there 会话 → 验证选定移动入口 → 私有预约凭据。
+"""统一身份认证 → 座位系统会话 → 验证后写私有凭据（there + 超星/学习通）。
 
     ① 认证    RSA 密码 + 可选 sms/wecom 二步验证，或企业微信扫码
-    ② 换会话  there /login 预置 Cookie → newsso authorize → there /login-oauth2
-    ③ 验证    当前移动入口 sessionId + 非匿名 profile；成功才写凭据
+    ② 换会话  there: /login 预置 Cookie → newsso authorize → /login-oauth2
+              超星: newsso authorize → 5read → login6（同一认证会话，两条独立链路）
+    ③ 验证    there: 移动入口 sessionId + 非匿名 profile
+              超星: office 座位首页 userLoginInfo
+
+`--system` 选择登录范围（默认 both）。两套会话分别写入独立凭据文件，
+互不影响；任一系统失败不写该系统的伪成功凭据。
 
 结构沿用 shu-otp-poc / shu-ds-poc。SSO 由固定版本子模块实现；密码、验证码、
-扫码 key 和 SSO 会话不落盘。凭据只含 there Cookie records，保留域/路径/有效期。
+扫码 key 和 SSO 会话不落盘。凭据只含目标域 Cookie records，保留域/路径/有效期。
 """
 
 from __future__ import annotations
@@ -18,8 +23,10 @@ import math
 import os
 import sys
 
-from seat import credentials as creds_mod
-from seat.client import SeatClient
+from seat.chaoxing import credentials as cx_creds_mod
+from seat.chaoxing.client import ChaoxingClient, ChaoxingError
+from seat.there import credentials as creds_mod
+from seat.there.client import SeatClient
 from sso import config
 from sso.client import ShuSSO
 from sso.runner import login_all_systems, save_evidence, session_params
@@ -77,39 +84,104 @@ def _print_probe(probe: dict) -> None:
 
 
 def check_flow(args) -> int:
-    """只读 profile；成功或失败均不修改已有凭据。"""
+    """只读验证；成功或失败均不修改已有凭据。"""
+    systems = _requested_systems(args)
+    ok = True
+    if "there" in systems:
+        try:
+            creds = creds_mod.load(args.out)
+            session = creds_mod.restore_session(creds)
+        except creds_mod.CredentialsError as exc:
+            log(f"\n  ✗ {exc}")
+            return 9
+        log("\n[复探] 用已有 Cookie 验证移动入口及 profile ...")
+        log(f"   {creds_mod.describe(creds, args.out)}")
+        try:
+            probe = probe_profile(session, args)
+        finally:
+            session.close()
+        _print_probe(probe)
+        ok = bool(probe.get("ok"))
+    if "chaoxing" in systems:
+        ok = _check_chaoxing(args) and ok
+    return 0 if ok else 6
+
+
+def _check_chaoxing(args) -> bool:
+    """只读验证超星凭据：office 座位首页能解析出当前用户即有效。"""
     try:
-        creds = creds_mod.load(args.out)
-        session = creds_mod.restore_session(creds)
-    except creds_mod.CredentialsError as exc:
+        creds = cx_creds_mod.load(getattr(args, "out_chaoxing", None))
+        session = cx_creds_mod.restore_session(creds)
+    except cx_creds_mod.CredentialsError as exc:
         log(f"\n  ✗ {exc}")
-        return 9
-    log("\n[复探] 用已有 Cookie 验证移动入口及 profile ...")
-    log(f"   {creds_mod.describe(creds, args.out)}")
+        return False
+    log("\n[复探] 用已有超星 Cookie 验证 office 会话及用户信息 ...")
+    log(f"   {cx_creds_mod.describe(creds, getattr(args, 'out_chaoxing', None))}")
     try:
-        probe = probe_profile(session, args)
+        client = ChaoxingClient(session=session, timeout=args.timeout,
+                                verify=not args.insecure)
+        client.bootstrap()
+    except ChaoxingError as exc:
+        log(f"  ✗ 超星验证失败：{type(exc).__name__}")
+        return False
     finally:
         session.close()
-    _print_probe(probe)
-    return 0 if probe.get("ok") else 6
+    log("  ✓ 超星 office 会话及用户信息已验证")
+    return True
+
+
+def _requested_systems(args) -> tuple[str, ...]:
+    """--system there|chaoxing|both（默认 both）展开为登录范围。"""
+    return {"there": ("there",), "chaoxing": ("chaoxing",),
+            "both": ("there", "chaoxing")}.get(getattr(args, "system", "both"),
+                                               ("there", "chaoxing"))
+
+
+def _write_cx_credentials(args, payload: dict) -> int:
+    try:
+        path = cx_creds_mod.save(payload, getattr(args, "out_chaoxing", None))
+    except Exception as exc:
+        log(f"\n  ✗ 超星凭据写入失败（{type(exc).__name__}）")
+        return 9
+    log("\n" + "=" * 62)
+    log(" 超星（学习通）凭据已生成")
+    log("=" * 62)
+    log(f"   {cx_creds_mod.describe(payload, path)}")
+    log("=" * 62)
+    log("\n 下一步：python poc.py --system chaoxing")
+    return 0
 
 
 def finalize(client: ShuSSO, args, username: str = "", **evidence_extra) -> int:
     """换会话并真实验证；失败不写伪成功凭据，不覆盖已有文件。"""
+    systems = _requested_systems(args)
     results = login_all_systems(client, username=username, room_type=args.room_type,
-                                timeout=args.timeout, verify=not args.insecure)
+                                timeout=args.timeout, verify=not args.insecure,
+                                systems=systems)
     print_summary(results)
     save_evidence("login-result.json", client, results, **evidence_extra)
-    result = results.get("there") or {}
-    if not result.get("logged_in"):
-        log("\n  ✗ there 验证失败，未写入凭据；已有凭据保留。")
-        return 5
-    try:
-        payload = build_credentials(client, result, args, username=username)
-    except creds_mod.CredentialsError:
-        log("\n  ✗ 无有效目标 Cookie 或非匿名 profile，未写入凭据。")
-        return 5
-    return write_credentials(args, payload)
+    outcomes: list[bool] = []
+    if "there" in systems:
+        result = results.get("there") or {}
+        if not result.get("logged_in"):
+            log("\n  ✗ there 验证失败，未写入凭据；已有凭据保留。")
+            outcomes.append(False)
+        else:
+            try:
+                payload = build_credentials(client, result, args, username=username)
+            except creds_mod.CredentialsError:
+                log("\n  ✗ there 无有效目标 Cookie 或非匿名 profile，未写入凭据。")
+                outcomes.append(False)
+            else:
+                outcomes.append(write_credentials(args, payload) == 0)
+    if "chaoxing" in systems:
+        result = results.get("chaoxing") or {}
+        if not result.get("logged_in") or not isinstance(result.get("credentials"), dict):
+            log("\n  ✗ 超星验证失败，未写入凭据；已有凭据保留。")
+            outcomes.append(False)
+        else:
+            outcomes.append(_write_cx_credentials(args, result["credentials"]) == 0)
+    return 0 if outcomes and all(outcomes) else 5
 
 
 # ---------------------------------------------------------------------------
@@ -268,8 +340,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--scan-timeout", type=int, default=180, help="扫码等待秒数（默认 180）")
     parser.add_argument("--no-qr", action="store_true", help="不在终端渲染二维码")
     parser.add_argument("--qr-style", choices=["block", "ascii"], default="block", help="终端二维码样式")
+    parser.add_argument("--system", choices=["there", "chaoxing", "both"], default="both",
+                        help="登录目标系统（默认 both：一次认证，同时换两套会话）")
     parser.add_argument("--cookie", default=None, help="there Cookie 请求头；或 SHU_SEAT_COOKIE")
-    parser.add_argument("--out", default=None, help="凭据路径；或 SHU_SEAT_CREDENTIALS")
+    parser.add_argument("--out", default=None, help="there 凭据路径；或 SHU_SEAT_CREDENTIALS")
+    parser.add_argument("--out-chaoxing", default=None,
+                        help="超星凭据路径；或 SHU_CHAOXING_CREDENTIALS（默认 .credentials.chaoxing.json）")
     parser.add_argument("--check", action="store_true", help="只读验证已有 Cookie，不覆盖凭据")
     parser.add_argument("--room-type", choices=list(creds_mod.MOBILE_PATHS), default="LIB_SEAT",
                         help="本次验证的移动入口（默认 LIB_SEAT）")
@@ -290,6 +366,9 @@ def main() -> int:
     args.base = config.THERE_BASE
     args.cookie = args.cookie if args.cookie is not None else os.getenv("SHU_SEAT_COOKIE")
     banner()
+    if args.cookie and args.system != "there":
+        print("错误：手工 Cookie 仅支持 there；超星请用 --system chaoxing/both 走 newsso 换会话")
+        return 1
     try:
         if args.check:
             return check_flow(args)

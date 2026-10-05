@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from datetime import datetime
-from seat.config import LOCAL_TZ
 
+from seat.there.config import LOCAL_TZ
 from src.client import ShuSSO as _UpstreamShuSSO
 from . import config, rsa_key
 
@@ -29,8 +29,8 @@ class ShuSSO(_UpstreamShuSSO):
                            **redact(safe)})
 
     def cookies(self, domain_contains: str | None = None) -> list[dict]:
-        """用于兼容查询，输出完整记录；最终落盘请用 seat.credentials.build。"""
-        from seat.credentials import _cookie_record
+        """用于兼容查询，输出完整记录；最终落盘请用 seat.there.credentials.build。"""
+        from seat.there.credentials import _cookie_record
         return [_cookie_record(c) for c in self.sess.cookies
                 if not domain_contains or (c.domain or "").lstrip(".") == domain_contains]
 

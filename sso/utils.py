@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 from src.utils import b64_params, rsa_encrypt_password  # noqa: F401
-from seat.credentials import write_private_json        # noqa: F401
+from seat.there.credentials import write_private_json  # noqa: F401
 from . import config
 
 REDACTED = "***REDACTED***"
@@ -24,6 +24,8 @@ _SECRET_KEYS = {
     "bookinguserid", "bookingusername", "loginname", "mobile", "phone",
     "cardno", "jobno", "namepinyin", "headimg",
     "token", "refreshtoken",
+    # 超星换会话结果里的私有载荷与用户对象：凭证记录、uid/uname/sno 都不进证据。
+    "credentials", "user", "verifiedparams", "salt",
 }
 _QUERY_SECRET_RE = re.compile(
     r"([?&](?:code|auth_?code|authorization_?code|key|k|state|utoken|authJump)=)[^&#\s\"'>]*",

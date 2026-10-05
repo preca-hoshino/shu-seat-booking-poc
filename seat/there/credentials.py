@@ -13,7 +13,8 @@ from pathlib import Path
 import requests
 from .config import LOCAL_TZ
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+# 文件在 seat/there/ 下，项目根要再上两级。
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_PATH = PROJECT_ROOT / ".credentials.json"
 THERE_BASE = "https://there.shu.edu.cn"
 THERE_HOST = "there.shu.edu.cn"

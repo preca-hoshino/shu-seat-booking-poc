@@ -1,3 +1,10 @@
-"""四个移动入口共用的 there 预约客户端。导入模块不联网。"""
+"""座位预约业务包：按系统分为两个子包，各自独立、互不导入。
 
-__all__ = ["client", "config", "credentials", "models", "ui"]
+- `seat.there`    — 本校 there 四入口（图书馆/24H/延长/科艺）
+- `seat.chaoxing` — 超星（学习通）图书馆座位（钱伟长馆/嘉定联合馆/延长文荟馆）
+
+两套系统的凭据文件、HTTP 客户端、规则与签名机制彼此独立；仅共享统一认证
+（`sso/`）与顶层 CLI（login.py / poc.py）。导入本包不联网、不产生副作用。
+"""
+
+__all__ = ["there", "chaoxing"]

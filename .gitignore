@@ -2,6 +2,7 @@
 .credentials*.json
 captures/
 _analysis_bundle/
+.tmp_cx/
 *.har
 
 # ---- Python ----

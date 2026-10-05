@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT))
 
 import requests  # noqa: E402
 
-from seat.client import (  # noqa: E402
+from seat.there.client import (  # noqa: E402
     BusinessError, ProtocolError, SeatClient, SeatError,
     SessionExpired, SubmissionThrottled,
 )
@@ -386,7 +386,7 @@ class ClientContractTests(OfflineCase):
 
 class CredentialsAndEvidenceTests(OfflineCase):
     def test_credentials_preserve_cookie_domain_path_and_flags(self):
-        from seat import credentials
+        from seat.there import credentials
         session = requests.Session()
         session.cookies.set("SPHYS_SESSION", "fixture-there-session-secret",
                             domain="there.shu.edu.cn", path="/", secure=True,
@@ -422,7 +422,7 @@ class CredentialsAndEvidenceTests(OfflineCase):
             self.assertNotIn(secret, summary)
 
     def test_credentials_reject_ssocookie_in_restored_there_jar(self):
-        from seat import credentials
+        from seat.there import credentials
         session = credentials.manual_session("SPHYS_SESSION=fixture-cookie; authenticityToken=fixture-csrf")
         creds = credentials.build(session, "LIB_SEAT", PROFILE)
         for mutation in ({"domain": "newsso.shu.edu.cn"}, {"domain": "shu.edu.cn"},
@@ -436,7 +436,7 @@ class CredentialsAndEvidenceTests(OfflineCase):
             credentials.manual_session("SHU_OAUTH2=fixture-sso")
 
     def test_expired_cookies_are_not_renewed_during_restore(self):
-        from seat import credentials
+        from seat.there import credentials
         session = requests.Session()
         session.cookies.set("SPHYS_SESSION", "fixture-expired", domain="there.shu.edu.cn", path="/", expires=1)
         creds = credentials.build(session, "LIB_SEAT", PROFILE)
@@ -466,7 +466,7 @@ class CredentialsAndEvidenceTests(OfflineCase):
         self.assertEqual(safe["room_type"], "LIB_SEAT")
         self.assertEqual(redact({"code": 200, "data": {"code": "fixture-oauth-secret"}}),
                          {"code": 200, "data": {"code": "***REDACTED***"}})
-        from seat.ui import safe_output
+        from seat.there.ui import safe_output
         terminal = safe_output({"code": 0, "response": {"code": "fixture-auth-code",
                               "Authorization": "fixture-bearer", "accessToken": "fixture-access",
                               "qrCodeValue": "fixture-checkin", "ownerId": "fixture-owner"}})

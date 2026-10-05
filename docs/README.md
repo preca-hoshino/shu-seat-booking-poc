@@ -5,6 +5,7 @@
 | 文档 | 内容 |
 | :--- | :--- |
 | [login.md](login.md) | newsso 认证、二步验证、扫码、OAuth 授权、本站 Cookie 与移动 sessionId |
+| [chaoxing.md](chaoxing.md) | 超星（学习通）座位：双链说明、13 个端点、enc 签名与服务端对照实验 |
 | [api.md](api.md) | 四系统覆盖、九个 HAR 业务端点、完整捕获字段与样例、区域规则、源码与 URL 记录 |
 | [booking.md](booking.md) | 预约状态与数据依赖、一次完整预约设计、四段实测链、全部八次创建 |
 | [cli.md](cli.md) | 认证与业务 CLI 参数、只读 / dry-run / 写操作的用法 |

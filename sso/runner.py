@@ -1,11 +1,16 @@
-"""仅运行 there：预置会话 → OAuth code → 回调 → HTML/profile 双重验证。"""
+"""there / chaoxing 两条换会话：there 走本地收紧流程，超星调 vendor 子模块实现。
+
+there：预置会话 → OAuth code → 回调 → HTML/profile 双重验证。
+超星：`chaoxing_redeem`（authorize → 5read → login6 → 座位首页 userLoginInfo）。
+"""
 
 from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import parse_qs, urljoin, urlparse
-from seat.config import LOCAL_TZ
+
+from seat.there.config import LOCAL_TZ
 
 from . import config
 from .client import ShuSSO
@@ -106,8 +111,8 @@ def _callback(client: ShuSSO, location: str) -> dict:
 def login_one(ctx: RedeemContext, room_type: str = "LIB_SEAT",
               verify: bool = True) -> dict:
     """上游 RedeemContext 接口；只允许固定 there 配置，返回原始 profile 供私有凭据。"""
-    from seat.client import SeatClient
-    from seat.credentials import build
+    from seat.there.client import SeatClient
+    from seat.there.credentials import build
 
     client, cfg = ctx.client, ctx.cfg
     if ctx.key != "there" or cfg.get("redirect_uri") != config.THERE_BASE + "/login-oauth2":
@@ -141,21 +146,77 @@ def login_one(ctx: RedeemContext, room_type: str = "LIB_SEAT",
     return result
 
 
+def chaoxing_redeem(client: ShuSSO, username: str = "") -> dict:
+    """超星换会话：调 vendor 子模块的实现，再组装座位侧凭据。
+
+    `systems/chaoxing.com/client.py` 在上游维护换会话链（authorize → 5read →
+    login6 → 座位首页校验），此处只做两件座位侧适配：
+
+    ① 以 `RedeemContext` 调 vendor 的 `redeem(ctx)`（同一 SSO 会话，Cookie 回写共享 Jar）；
+    ② 成功后把共享会话里的 chaoxing.com Cookie 交给 `seat.chaoxing.credentials`
+       组装成私有载荷，供 login.py 立即取出写盘（credentials 不进证据）。
+    """
+    from src.registry import redeem_impl
+    from src.system_api import RedeemContext as VendorRedeemContext
+
+    impl = redeem_impl("chaoxing")
+    if impl is None:                 # 子模块版本过旧（sso/config.py 已做装载期检查）
+        return fail("unsupported_system")
+    result = impl(VendorRedeemContext(client=client, key="chaoxing",
+                                      cfg=config.CHAOXING, username=username))
+    if not result.get("logged_in"):
+        return result
+
+    from seat.chaoxing.credentials import CredentialsError, build
+
+    user = {"uid": result.get("user_id"), "uname": result.get("real_name"),
+            "sno": result.get("username")}
+    try:
+        credentials = build(client.sess, user, username=username, login="newsso/5read")
+    except CredentialsError:
+        return fail("no_session_cookies")
+    result.update({"user": user, "cookie_count": len(credentials["cookies"]),
+                   "credentials": credentials})
+    return result
+
+
 def login_all_systems(client: ShuSSO, username: str = "", room_type: str = "LIB_SEAT",
-                      timeout: float | None = None, verify: bool = True) -> dict[str, dict]:
-    """只登录 there，不运行上游注册表中的其它系统。"""
-    log("\n[OAuth ①③④] 用 SSO 会话登录空间预约系统 ...\n")
+                      timeout: float | None = None, verify: bool = True,
+                      systems: tuple[str, ...] = ("there",)) -> dict[str, dict]:
+    """按 systems 依次登录：there（OAuth 回调 + 移动入口验证）与超星（5read/login6 换会话）。
+
+    两个系统共享同一 newsso 认证会话（SHU_OAUTH2），但换会话与落地域彼此独立；
+    任一系统失败只记为该系统失败，不影响另一个。默认仍是只登录 there，
+    由 login.py 的 --system 决定实际范围。
+    """
     if timeout is not None:
         client.timeout = timeout
-    ctx = RedeemContext(client=client, key="there", cfg=config.SYSTEMS["there"], username=username)
-    try:
-        result = login_one(ctx, room_type=room_type, verify=verify)
-    except KeyboardInterrupt:
-        raise
-    except Exception as exc:
-        # 网络异常往往自带完整 URL；不打印/保存原始 exception 文本。
-        result = fail("exception", error_type=type(exc).__name__)
-    return {"there": result}
+    results: dict[str, dict] = {}
+    if "there" in systems:
+        log("\n[OAuth ①③④] 用 SSO 会话登录空间预约系统（there） ...\n")
+        ctx = RedeemContext(client=client, key="there", cfg=config.SYSTEMS["there"],
+                            username=username)
+        try:
+            results["there"] = login_one(ctx, room_type=room_type, verify=verify)
+        except KeyboardInterrupt:
+            raise
+        except Exception as exc:
+            # 网络异常往往自带完整 URL；不打印/保存原始 exception 文本。
+            results["there"] = fail("exception", error_type=type(exc).__name__)
+    if "chaoxing" in systems:
+        log("\n[换会话] 用 SSO 会话登录超星（学习通）图书馆座位 ...\n")
+        try:
+            results["chaoxing"] = chaoxing_redeem(client, username=username)
+            if results["chaoxing"].get("logged_in"):
+                log("     ✓ 已取得 office 会话（凭据在写入阶段保存）")
+            else:
+                log(f"     ✗ 失败（{results['chaoxing'].get('reason')}）")
+        except KeyboardInterrupt:
+            raise
+        except Exception as exc:
+            results["chaoxing"] = {"logged_in": False, "reason": "exception",
+                                   "error_type": type(exc).__name__, "final_url": ""}
+    return results
 
 
 def save_evidence(name: str, client: ShuSSO, results: dict[str, dict], **fields) -> Path:
