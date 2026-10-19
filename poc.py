@@ -5,7 +5,7 @@
 - 默认 `--system there`：四入口统一空间预约（原行为不变）；
 - `--system chaoxing`：超星（学习通）图书馆座位（钱伟长馆/嘉定联合馆/延长文荟馆）。
 
-无子命令时只读概览。book/cancel/finish 是显式业务操作；book --dry-run 只查询
+无子命令时只读概览。book/renew/sign/signback/leave/cancel/finish 是显式业务操作；--dry-run 只查询
 并显示完整请求体（含超星 enc 签名，不提交）。退出码：0 正常；2 参数无效；
 6 上游/业务失败；9 凭据不可用；130 用户中断。
 """
@@ -78,8 +78,10 @@ def run_overview(creds: dict, args) -> dict:
 
 def run_command(client: SeatClient, args) -> dict:
     command = args.command
-    if command in ("config", "available"):
-        raise ValueError("config/available 为超星系统命令，请加 --system chaoxing")
+    if command in ("config", "available", "reserve-info", "used-times", "address",
+                   "risk-config", "domain-rules", "i18n", "renew", "sign", "signback", "leave",
+                   "cur-used", "person-role", "entrance-config", "identity-verify"):
+        raise ValueError(f"{command} 为超星系统命令，请加 --system chaoxing")
     if command == "profile":
         return client.profile()
     if command == "recent":
@@ -168,12 +170,33 @@ def run_cx_command(client: ChaoxingClient, args) -> dict:
         return client.recent()
     if command == "config":
         return client.config_data()
+    if command == "cur-used":
+        return client.cur_used()
+    if command == "person-role":
+        return client.person_role()
+    if command == "entrance-config":
+        return client.entrance_config(args.app_type)
+    if command == "identity-verify":
+        return client.identity_verify(args.mapp_id)
+    if command == "i18n":
+        return client.i18n()
+    if command == "domain-rules":
+        return client.link_domain_rules()
+    if command == "risk-config":
+        return client.risk_config(args.app_type, args.app_id)
     if command == "rooms":
         if not args.day:
             raise ValueError("超星 rooms 需要 --day YYYY-MM-DD")
         return client.rooms(args.day)
     if command == "available":
         return client.availability(args.room, args.day, args.begin, args.end)
+    if command == "reserve-info":
+        return client.reserve_info(args.room, args.seat,
+                                   method="POST" if args.post else "GET")
+    if command == "used-times":
+        return client.used_times(args.room, args.seat, args.day)
+    if command == "address":
+        return client.address(args.dept_id or client.dept_id, args.room)
     if command == "book":
         if not (args.day and args.seat):
             raise ValueError("超星 book 需要 --day YYYY-MM-DD 与 --seat 座位号")
@@ -188,6 +211,28 @@ def run_cx_command(client: ChaoxingClient, args) -> dict:
         except ChaoxingError as exc:
             output["refresh_error"] = str(exc)
         return output
+    if command == "renew":
+        if args.dry_run:
+            prepared = client.prepare_renew(args.room, args.day, args.begin,
+                                            args.end, args.seat)
+            return {"dry_run": True, "submitted": False, "request": prepared}
+        result = client.renew(args.room, args.day, args.begin, args.end, args.seat)
+        reserve_id = result["data"]["seatReserve"]["id"]
+        output = {"renewed": result, "reserve_id": reserve_id}
+        try:
+            output["recent"] = client.recent()
+        except ChaoxingError as exc:
+            output["refresh_error"] = str(exc)
+        return output
+    if command in ("sign", "signback", "leave"):
+        result = getattr(client, command)(args.booking_id)
+        output = {"operation": command, "response": result,
+                  "reserve_id": args.booking_id}
+        try:
+            output["recent"] = client.recent()
+        except ChaoxingError as exc:
+            output["refresh_error"] = str(exc)
+        return output
     if command == "cancel":
         result = client.cancel(args.booking_id)
         output = {"operation": "cancel", "response": result, "reserve_id": args.booking_id}
@@ -197,7 +242,7 @@ def run_cx_command(client: ChaoxingClient, args) -> dict:
             output["refresh_error"] = str(exc)
         return output
     if command in ("overview", "areas", "detail", "finish", "check-in"):
-        raise ValueError(f"超星系统不支持 {command}；请用 profile/recent/config/rooms/available/book/cancel")
+        raise ValueError(f"超星系统不支持 {command}；请用 reserve-info/sign/leave/renew 等命令")
     raise ValueError(f"未知操作：{command}")
 
 
@@ -221,7 +266,7 @@ def chaoxing_main(args) -> int:
         return 0
     except CxBusinessError as exc:
         output = {"error": {"message": str(exc), "business": exc.response}}
-        if args.command == "book" and client is not None:
+        if args.command in ("book", "renew", "sign", "signback", "leave") and client is not None:
             try:
                 output["recent"] = client.recent()
             except ChaoxingError:
@@ -252,7 +297,7 @@ def _common(parser, *, sparse: bool = False) -> None:
     parser.add_argument("--credentials", default=default(None),
                         help="凭据文件（默认 .credentials.json；超星默认 .credentials.chaoxing.json）")
     parser.add_argument("--room-type", choices=list(config.SYSTEMS), default=default(None),
-                        help="there 四种捕获类型（默认取凭据中的 room_type）")
+                        help="there 四种资源类型（默认取凭据中的 room_type）")
     parser.add_argument("--base", default=default(None), help="业务站点根地址（默认按系统/凭据）")
     parser.add_argument("--timeout", type=float, default=default(30.0), help="请求超时秒数（默认 30）")
     parser.add_argument("--insecure", action="store_true", default=default(False), help="显式跳过业务 TLS 校验")
@@ -269,9 +314,23 @@ def build_parser() -> argparse.ArgumentParser:
         "overview": "查询日期概览（there）",
         "areas": "查询区域树（there）", "rooms": "查询房间/座位（there 按区域；超星按日）",
         "config": "查询座位规则配置（超星）",
+        "cur-used": "查询当前使用显示开关（超星）",
+        "person-role": "查询当前用户座位角色（超星）",
+        "entrance-config": "查询入口功能开关（超星）",
+        "identity-verify": "查询入口身份/管理权限（超星）",
         "available": "查询房间时段可用座位（超星，派生值）",
+        "reserve-info": "查询座位当前预约详情（超星；id 为 roomId）",
+        "used-times": "查询座位当日占用时段（超星）",
+        "address": "查询签到页位置范围（超星）",
+        "risk-config": "查询预约页风控配置（超星）",
+        "domain-rules": "查询预约页域名规则（超星）",
+        "i18n": "查询预约页国际化文案（超星）",
         "detail": "查询预约详情（there）",
         "book": "创建一座位单时段预约（两系统）", "cancel": "取消预约（两系统）",
+        "renew": "续约已有超星预约（同一座位的新时段）",
+        "sign": "签到或暂离后回座（超星）",
+        "signback": "退座并结束当前使用（超星）",
+        "leave": "暂离座位（超星）",
         "finish": "提前结束预约（there）",
         "check-in": "图书馆脚本引用的签到（there，未验证）",
     }
@@ -293,6 +352,24 @@ def build_parser() -> argparse.ArgumentParser:
             child.add_argument("--day", required=True, help="YYYY-MM-DD")
             child.add_argument("--begin", required=True, help="开始 HH:MM")
             child.add_argument("--end", required=True, help="结束 HH:MM")
+        if name == "reserve-info":
+            child.add_argument("--room", required=True, help="房间 roomId；API 的 id 参数")
+            child.add_argument("--seat", required=True, help="座位号")
+            child.add_argument("--post", action="store_true", help="使用 POST 变体（默认 GET）")
+        if name == "used-times":
+            child.add_argument("--room", required=True, help="房间 roomId")
+            child.add_argument("--seat", required=True, help="座位号")
+            child.add_argument("--day", required=True, help="YYYY-MM-DD")
+        if name == "address":
+            child.add_argument("--room", required=True, help="房间 roomId")
+            child.add_argument("--dept-id", help="座位机构 deptId（默认使用凭据中的机构号）")
+        if name == "risk-config":
+            child.add_argument("--app-type", default="0", help="页面 appType（默认 0）")
+            child.add_argument("--app-id", help="座位机构 deptId（默认使用凭据中的机构号）")
+        if name == "entrance-config":
+            child.add_argument("--app-type", required=True, help="入口 appType")
+        if name == "identity-verify":
+            child.add_argument("--mapp-id", required=True, help="页面 mappId")
         if name == "book":
             child.add_argument("--room", required=True, help="房间 roomId")
             child.add_argument("--begin", required=True, help="there：YYYY-MM-DD HH:mm；超星：HH:MM")
@@ -301,7 +378,14 @@ def build_parser() -> argparse.ArgumentParser:
             child.add_argument("--day", help="超星：YYYY-MM-DD")
             child.add_argument("--seat", help="超星：座位号（如 135）")
             child.add_argument("--dry-run", action="store_true", help="查询并组装完整请求体，不提交")
-        if name in ("detail", "cancel", "finish", "check-in"):
+        if name == "renew":
+            child.add_argument("--room", required=True, help="已有预约的房间 roomId")
+            child.add_argument("--day", required=True, help="YYYY-MM-DD")
+            child.add_argument("--begin", required=True, help="新增时段开始 HH:MM")
+            child.add_argument("--end", required=True, help="新增时段结束 HH:MM")
+            child.add_argument("--seat", required=True, help="已有预约的座位号")
+            child.add_argument("--dry-run", action="store_true", help="获取当页盐并组装请求，不提交")
+        if name in ("detail", "cancel", "finish", "check-in", "sign", "signback", "leave"):
             child.add_argument("booking_id", help="there：bookingId；超星：预约数字 reserveId")
         if name == "detail":
             child.add_argument("--show-checks", action=argparse.BooleanOptionalAction, default=None,

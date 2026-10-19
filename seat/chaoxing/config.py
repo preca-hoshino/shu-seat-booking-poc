@@ -1,8 +1,5 @@
 """超星（学习通）图书馆座位预约协议常量。
 
-来源：2026-10-05 两份 HAR（业务链 `图书馆分馆座位预约.har`、登录链 `补充.har`）
-与浏览器实测。只收录已实测的端点与参数；未捕获项不写。
-
 机构说明：`fid=35480` 是"上海大学图书馆"在超星的机构号（校图书馆采购的
 座位系统单位），与全校账号 `209`（上海大学/泛雅）是两个不同的机构。
 """
@@ -25,15 +22,16 @@ USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36")
 
 DEFAULT_TIMEOUT = 30.0
-SUBMIT_INTERVAL = 10.0            # 服务端"同一用户10秒只能提交一次"（HAR 实测文案）
+SUBMIT_INTERVAL = 10.0            # 服务端提交间隔
 
 # ---- 页面 ----
 SEAT_INDEX_PATH = "/front/third/apps/seat/index"
 SEAT_SELECT_PATH = "/front/third/apps/seat/select"
+SEAT_CODE_PATH = "/front/apps/seat/code"        # 续约页，id=roomId，含当页 submit_enc/fidEnc
 # select 页失败会跳转到这里（200 错误页，msg 在 query 里）
 ERROR_PATH_PREFIX = "/front/apps/reserve/error"
 
-# ---- 实测 API（13 个，2026-10-05 HAR + 浏览器复验）----
+# ---- 业务 API ----
 HOME_PATH = "/data/apps/seat/index"                 # GET  fidEnc,r → seatConfig/curReserves/nearReserves
 CONFIG_PATH = "/data/apps/seat/config"              # GET  fidEnc → 规则配置
 LEVELS_PATH = "/data/apps/seat/levels"              # GET  deptIdEnc,type=0 → 层级字典
@@ -50,8 +48,15 @@ ENTRANCE_CONFIG_PATH = "/data/apps/seat/entrance/config"   # GET appType,fidEnc
 IDENTITY_VERIFY_PATH = "/data/apps/seat/identity/verify"   # GET mappId,fidEnc
 DOMAIN_RULES_PATH = "/data/apps/reserve/link/domain/rules"  # GET
 RISK_CHECK_PATH = "/data/apps/seat/risk/check/config"       # POST appType,appId
+RESERVE_INFO_PATH = "/data/apps/seat/reserve/info"           # GET/POST id=roomId,seatNum
+GET_USED_TIMES_PATH = "/data/apps/seat/getusedtimes"         # POST roomId,seatNum,day,fidEnc
+SIGN_PATH = "/data/apps/seat/sign"                           # GET id=reserveId
+SIGNBACK_PATH = "/data/apps/seat/signback"                   # GET id=reserveId，退座
+LEAVE_PATH = "/data/apps/seat/leave"                         # POST id=reserveId
+ADDRESS_PATH = "/data/apps/seat/address"                     # GET deptId,roomId
+I18N_PATH = "/data/apps/seat/i18n"                           # GET
 
-# ---- 规则（HAR/页面实测值；服务端响应为准）----
+# ---- 默认规则（服务端响应为准）----
 OPEN_TIME = "07:00"               # 当天预约开放（beforeOpenTimeStamp）
 SERVICE_START = "08:00"           # 每日开放时段
 SERVICE_END = "22:00"

@@ -1,14 +1,14 @@
 """超星（学习通）座位预约系统。
 
-覆盖：`office.chaoxing.com` 的 13 个实测座位端点、submit 防伪签名（enc）、
+覆盖：`office.chaoxing.com` 的选座、续约、签到、暂离与查询端点，
+两种 submit 防伪签名（enc）、
 `.credentials.chaoxing.json` 凭据（换会话已外置到 vendor 子模块）。
 
-来源：2026-10-05 两份 HAR（企微业务链、newsso→学习通登录链）与浏览器实测
-（devtools 会话，含签名 A/B 对照与三次必败提交验证）。未实测的端点与字段不写。
+支持座位查询、预约、续约、签到、暂离、回座与退座。
 
 模块分工：
     config      主机、机构号、路径与规则常量
-    enc         submit 签名与盐解析（动态分析复现，真实向量见 tests）
+    enc         submit 签名与盐解析
     client      会话校验 + 端点封装 + 节流提交
     credentials 凭据读写（仅 chaoxing.com 域 Cookie）
     ui          终端呈现

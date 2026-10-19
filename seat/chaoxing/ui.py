@@ -1,6 +1,7 @@
 """超星系统终端输出：分隔线与表格风格与 there 侧一致，不输出会话值。
 
-脱敏约定：uid / sno 一律替换为占位符；JWT 形状字符串整项替换。
+脱敏约定：个人姓名 / uid / sno / 联系方式与页面盐一律替换为占位符；
+JWT 形状字符串整项替换。
 预约/房间 ID 保留（是后续 cancel 的必要操作数）。
 """
 
@@ -14,10 +15,12 @@ from seat.there.config import LOCAL_TZ
 from seat.there.ui import table
 from . import config
 
-_PRIVATE_KEYS = {"uid", "sno"}
+_PRIVATE_KEYS = {"uid", "sno", "uname", "username", "realname", "salt",
+                 "submitenc", "updateuid", "pushformuserid", "mobile", "phone"}
 _JWT_RE = re.compile(r"\b[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b")
-# 仅实录两种状态（HAR/浏览器）；未知值原样显示数字，不臆造枚举。
-STATUS_TEXT = {0: "进行中", 7: "已结束"}
+# 2026-10-19 同一预约的状态变化：0 → 签到后 1 → 暂离后 3 → 回座后 1。
+# 未见完整服务端枚举定义，其他值仍原样显示。
+STATUS_TEXT = {0: "待签到", 1: "在座", 2: "已退座", 3: "暂离", 7: "已结束"}
 
 
 def safe_output(value):
@@ -78,7 +81,7 @@ def _render_reserves(title: str, items) -> str:
 
 def _render_overview(result: dict) -> str:
     user = result.get("user") or {}
-    lines = [f"当前用户：{user.get('uname') or '(未知)'}（uid 已脱敏）" if user else "当前用户：(未验证)",
+    lines = ["当前用户：已验证（个人身份已脱敏）" if user else "当前用户：(未验证)",
              ""]
     lines.append(_render_reserves("当前预约", result.get("current") or []))
     lines.append("")
@@ -146,7 +149,7 @@ def render(result: dict, command: str) -> str:
         return _render_overview(result)
     if command == "profile" and isinstance(result.get("user"), dict):
         user = result["user"]
-        return f"当前用户：{user.get('uname') or '(未知)'}\n（uid / sno 已脱敏，完整身份见私有凭据）"
+        return "当前用户：已验证\n（个人身份已脱敏，完整身份见私有凭据）"
     if command == "recent":
         return (_render_reserves("当前预约", result.get("current") or [])
                 + "\n\n" + _render_reserves("最近预约", result.get("near") or []))

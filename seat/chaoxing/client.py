@@ -10,7 +10,7 @@
 - 页面同站重定向严格跟随（仅 office.chaoxing.com、有限跳数），跨站/登录页立即判失效。
 
 只读可用性说明：``availability`` 是"容量区间减服务端已占"的**派生值**，
-未逐座位探测；最终以创建时服务端校验为准（HAR 已见座位冲突类业务拒绝）。
+未逐座位探测；最终以创建时服务端校验为准。
 """
 
 from __future__ import annotations
@@ -22,12 +22,12 @@ import re
 import threading
 import time
 from copy import deepcopy
-from urllib.parse import parse_qs, urljoin, urlsplit
+from urllib.parse import parse_qs, urlencode, urljoin, urlsplit
 
 import requests
 
 from . import config
-from .enc import build_enc, parse_salt
+from .enc import build_enc, build_renew_enc, parse_salt
 
 __all__ = ["ChaoxingClient", "ChaoxingError", "SessionExpired", "ProtocolError",
            "BusinessError", "SubmissionThrottled", "parse_user_info"]
@@ -35,6 +35,7 @@ __all__ = ["ChaoxingClient", "ChaoxingError", "SessionExpired", "ProtocolError",
 _REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 _TIME_RE = re.compile(r"^([01]?\d|2[0-3]):([0-5]\d)$")
 _USER_INFO_RE = re.compile(r"userLoginInfo\s*=\s*(\{.*?\})\s*\|\|\s*\{\}", re.S)
+_CODE_FID_RE = re.compile(r"\bfidEnc\s*=\s*['\"]([^'\"]+)['\"]")
 
 
 class ChaoxingError(RuntimeError):
@@ -123,6 +124,19 @@ def _seat_number(seat) -> str:
     return text
 
 
+def _seat_query_number(seat) -> str:
+    """code / reserve-info 页使用未补零座号；提交与占用查询使用三位座号。"""
+    value = _seat_number(seat)
+    return str(int(value)) if value.isdigit() else value
+
+
+def _reserve_id(reserve_id) -> str:
+    value = str(reserve_id).strip()
+    if not value.isdigit():
+        raise ValueError("reserveId 应为创建响应或最近预约返回的数字 id")
+    return value
+
+
 class ChaoxingClient:
     """一个实例绑定一个机构（默认上海大学图书馆 35480）。"""
 
@@ -162,6 +176,10 @@ class ChaoxingClient:
     def _select_url(self, room_id, day: str) -> str:
         return (f"{self.base}{config.SEAT_SELECT_PATH}?deptIdEnc={self.dept_enc}"
                 f"&id={room_id}&day={day}&backLevel=2&fidEnc={self.dept_enc}")
+
+    def _code_url(self, room_id, seat) -> str:
+        query = urlencode({"id": str(room_id), "seatNum": _seat_query_number(seat)})
+        return f"{self.base}{config.SEAT_CODE_PATH}?{query}"
 
     def _headers(self, method: str, referer: str | None) -> dict:
         # SSO/业务共用 CookieJar，但 SSO 的全局头不能流入 chaoxing 请求。
@@ -241,7 +259,8 @@ class ChaoxingClient:
             raise BusinessError(result, http_status=response.status_code)
         return result
 
-    def _api_get(self, path: str, params: dict, *, referer: str | None = None) -> dict:
+    def _api_get(self, path: str, params: dict | None = None,
+                 *, referer: str | None = None) -> dict:
         return self._envelope(self._request("GET", path, params=params, referer=referer))
 
     def _api_post(self, path: str, form: dict, *, referer: str | None = None) -> dict:
@@ -284,6 +303,40 @@ class ChaoxingClient:
     def config_data(self) -> dict:
         return self._api_get(config.CONFIG_PATH, {"fidEnc": self.dept_enc})
 
+    def cur_used(self) -> dict:
+        """首页当前使用显示开关。"""
+        return self._api_get(config.CUR_USED_PATH, {"fidEnc": self.dept_enc})
+
+    def person_role(self) -> dict:
+        """当前用户的座位角色信息。"""
+        return self._api_get(config.PERSON_ROLE_PATH, {"fidEnc": self.dept_enc})
+
+    def entrance_config(self, app_type) -> dict:
+        """入口功能开关；appType 由调用方提供。"""
+        return self._api_get(config.ENTRANCE_CONFIG_PATH,
+                             {"appType": str(app_type), "fidEnc": self.dept_enc})
+
+    def identity_verify(self, mapp_id) -> dict:
+        """入口身份/管理权限；mappId 由调用方提供。"""
+        return self._api_get(config.IDENTITY_VERIFY_PATH,
+                             {"mappId": str(mapp_id), "fidEnc": self.dept_enc})
+
+    def i18n(self) -> dict:
+        """签到/续约页面的国际化文案。"""
+        return self._api_get(config.I18N_PATH,
+                             referer=self.base + config.SEAT_CODE_PATH)
+
+    def link_domain_rules(self) -> dict:
+        """预约页域名规则。"""
+        return self._api_get(config.DOMAIN_RULES_PATH,
+                             referer=self.base + config.SEAT_CODE_PATH)
+
+    def risk_config(self, app_type="0", app_id=None) -> dict:
+        """签到/续约页的风控配置；appId 为座位机构 deptId。"""
+        return self._api_post(config.RISK_CHECK_PATH, {
+            "appType": str(app_type), "appId": str(app_id or self.dept_id),
+        }, referer=self.base + config.SEAT_CODE_PATH)
+
     def levels(self) -> dict:
         return self._api_get(config.LEVELS_PATH,
                              {"deptIdEnc": self.dept_enc, "type": "0"})
@@ -303,12 +356,16 @@ class ChaoxingClient:
             "deptIdEnc": self.dept_enc, "fidEnc": self.dept_enc,
         })
 
-    def room_info(self, room_id, day: str, query_reserve: bool = True) -> dict:
-        day = _day_value(day)
-        return self._api_post(config.ROOM_INFO_PATH, {
-            "id": str(room_id), "toDay": day, "fidEnc": self.dept_enc,
-            "queryReserve": "true" if query_reserve else "false",
-        })
+    def room_info(self, room_id, day: str | None = None,
+                  query_reserve: bool = True, *, fid_enc: str | None = None) -> dict:
+        """旧选座页带 toDay/queryReserve；新 code 页仅传 id/fidEnc。"""
+        form = {"id": str(room_id), "fidEnc": fid_enc or self.dept_enc}
+        if day is not None:
+            form.update({"toDay": _day_value(day),
+                         "queryReserve": "true" if query_reserve else "false"})
+        return self._api_post(config.ROOM_INFO_PATH, form,
+                              referer=(self.base + config.SEAT_CODE_PATH
+                                       if day is None else None))
 
     def used_seats(self, room_id, day: str, begin: str, end: str) -> dict:
         day = _day_value(day)
@@ -323,6 +380,32 @@ class ChaoxingClient:
     def check_exist(self, seat, room_id) -> dict:
         return self._api_get(config.CHECK_EXIST_PATH,
                              {"seatNum": _seat_number(seat), "roomId": str(room_id)})
+
+    def reserve_info(self, room_id, seat, method: str = "GET") -> dict:
+        """按房间/座号取当前预约详情；支持 GET 与 POST。"""
+        fields = {"id": str(room_id), "seatNum": _seat_query_number(seat)}
+        method = method.upper()
+        if method == "GET":
+            return self._api_get(config.RESERVE_INFO_PATH, fields,
+                                 referer=self._code_url(room_id, seat))
+        if method == "POST":
+            return self._api_post(config.RESERVE_INFO_PATH, fields,
+                                  referer=self._code_url(room_id, seat))
+        raise ValueError("reserve_info method 只能是 GET 或 POST")
+
+    def address(self, dept_id, room_id) -> dict:
+        """签到页位置范围，由前端用于位置检查。"""
+        return self._api_get(config.ADDRESS_PATH,
+                             {"deptId": str(dept_id), "roomId": str(room_id)},
+                             referer=self.base + config.SEAT_CODE_PATH)
+
+    def used_times(self, room_id, seat, day: str,
+                   *, fid_enc: str | None = None) -> dict:
+        """当前座位当日已占用区间，data 为 [起始毫秒,结束毫秒] 二元数组。"""
+        return self._api_post(config.GET_USED_TIMES_PATH, {
+            "roomId": str(room_id), "seatNum": _seat_number(seat),
+            "day": _day_value(day), "fidEnc": fid_enc or self.dept_enc,
+        }, referer=self._code_url(room_id, seat))
 
     def availability(self, room_id, day: str, begin: str, end: str) -> dict:
         """房间在给定时段的可用座位（派生：容量区间减服务端已占座位）。"""
@@ -375,6 +458,27 @@ class ChaoxingClient:
             raise ProtocolError("select 页未包含盐（页面结构变化）",
                                 http_status=response.status_code) from exc
 
+    def _fetch_code_tokens(self, room_id, seat) -> tuple[str, str]:
+        """续约前获取 code 页的当页盐和 fidEnc；id 是 roomId。"""
+        response = self._request("GET", config.SEAT_CODE_PATH, params={
+            "id": str(room_id), "seatNum": _seat_query_number(seat),
+        }, follow=True)
+        path = urlsplit(response.url).path or ""
+        if path.startswith(config.ERROR_PATH_PREFIX):
+            message = _error_message_from_url(response.url) or "页面错误"
+            raise BusinessError({"success": False, "msg": message},
+                                http_status=response.status_code)
+        try:
+            salt = parse_salt(response.text)
+        except ValueError as exc:
+            raise ProtocolError("code 页未包含续约签名盐（页面结构变化）",
+                                http_status=response.status_code) from exc
+        match = _CODE_FID_RE.search(response.text)
+        if not match or not match.group(1).strip():
+            raise ProtocolError("code 页未包含 fidEnc（页面结构变化）",
+                                http_status=response.status_code)
+        return salt, match.group(1).strip()
+
     def prepare_submit(self, room_id, day: str, begin: str, end: str, seat,
                        captcha: str = "", wy_token: str = "") -> dict:
         """拉取最新盐并组装提交体（不发送）；`book --dry-run` 使用。"""
@@ -391,6 +495,21 @@ class ChaoxingClient:
                 "endTime": end, "day": day, "seatNum": seat_num, "captcha": captcha,
                 "wyToken": wy_token, "enc": build_enc(signature, salt)}
         return {"form": form, "salt": salt}
+
+    def prepare_renew(self, room_id, day: str, begin: str, end: str, seat,
+                      captcha: str = "", wy_token: str = "") -> dict:
+        """续约请求体；新时段紧接当前预约，由服务端最终校验。"""
+        day = _day_value(day)
+        begin, end = _time_value(begin, "begin"), _time_value(end, "end")
+        if end <= begin:
+            raise ValueError("结束时间必须晚于开始时间")
+        seat_num = _seat_number(seat)
+        salt, fid_enc = self._fetch_code_tokens(room_id, seat)
+        form = {"roomId": str(room_id), "startTime": begin, "endTime": end,
+                "day": day, "captcha": captcha, "seatNum": seat_num,
+                "wyToken": wy_token}
+        form["enc"] = build_renew_enc(form, salt)
+        return {"form": form, "salt": salt, "fidEnc": fid_enc}
 
     def _claim_submit_slot(self) -> None:
         with self._submit_lock:
@@ -413,8 +532,33 @@ class ChaoxingClient:
             raise ProtocolError("创建成功但没有 seatReserve.id；请刷新最近预约核对，勿直接重试")
         return result
 
+    def renew(self, room_id, day: str, begin: str, end: str, seat,
+              captcha: str = "", wy_token: str = "") -> dict:
+        """续约单次尝试：code 页新盐 → 7 字段签名 → submit；不自动重试。"""
+        self._claim_submit_slot()
+        prepared = self.prepare_renew(room_id, day, begin, end, seat,
+                                      captcha=captcha, wy_token=wy_token)
+        result = self._api_post(config.SUBMIT_PATH, prepared["form"],
+                                referer=self._code_url(room_id, seat))
+        reserve = (result.get("data") or {}).get("seatReserve")
+        if not isinstance(reserve, dict) or not reserve.get("id"):
+            raise ProtocolError("续约成功但没有 seatReserve.id；请刷新最近预约核对，勿直接重试")
+        return result
+
+    def sign(self, reserve_id) -> dict:
+        """签到或暂离后回座；id 是 seatReserve.id。"""
+        return self._api_get(config.SIGN_PATH, {"id": _reserve_id(reserve_id)},
+                             referer=self.base + config.SEAT_CODE_PATH)
+
+    def signback(self, reserve_id) -> dict:
+        """从座位首页退座；id 是 seatReserve.id，成功后应刷新预约核对。"""
+        return self._api_get(config.SIGNBACK_PATH, {"id": _reserve_id(reserve_id)},
+                             referer=self._index_url())
+
+    def leave(self, reserve_id) -> dict:
+        """暂离；id 是 seatReserve.id。"""
+        return self._api_post(config.LEAVE_PATH, {"id": _reserve_id(reserve_id)},
+                              referer=self.base + config.SEAT_CODE_PATH)
+
     def cancel(self, reserve_id) -> dict:
-        text = str(reserve_id).strip()
-        if not text.isdigit():
-            raise ValueError("reserveId 应为创建响应或最近预约返回的数字 id")
-        return self._api_get(config.CANCEL_PATH, {"id": text})
+        return self._api_get(config.CANCEL_PATH, {"id": _reserve_id(reserve_id)})

@@ -1,14 +1,27 @@
 # 登录与凭据
 
-> 返回 [项目 README](../README.md) · [文档索引](README.md)
+> [文档索引](README.md) · [命令行](cli.md)
 
-资料依据 2026-10-03 的四个用户 HAR 与固定提交的 `shu-sso-poc`。以下保留完整捕获字段、脱敏样例与来源边界；章节编号沿用[完整研究记录](research.md)，方便交叉引用。接口章节见 [api.md](api.md)，认证章节见 [login.md](login.md)，预约设计与四条实测链见 [booking.md](booking.md)，来源及九十条时间线见 [evidence.md](evidence.md)。
+`login.py` 通过统一身份认证建立业务会话。可选择账号密码、短信或企业微信二步验证，也可通过企业微信扫码登录。认证完成后，程序分别为 there 和超星换取业务会话并验证身份。
 
-`login.py` 负责 **认证 → 换 there 会话 → 验证移动 profile → 保存凭据**。
-SSO 密码、二步和扫码协议复用固定版本的 git 子模块；`sso/` 只做 there 配置、
-结果校验与脱敏适配，`seat/` 负责移动页面引导与 `/api/v3` 请求。
+```bash
+python login.py
+python login.py --login password --method wecom
+python login.py --login wecom_scan
+python login.py --system there
+python login.py --system chaoxing
+python login.py --check
+```
 
-## 本项目的凭据
+there 凭据默认保存在 `.credentials.json`，超星凭据保存在 `.credentials.chaoxing.json`。两套系统的 Cookie 不可混用。登录成功需要业务页面和用户接口确认，单纯收到 HTTP 200 或某个回调 URL 不足以证明会话可用。
+
+there 客户端使用当前 Cookie jar 打开所选移动页面，解析 `sessionId`，并以此设置 `x-hys-session`；`x-room-type` 与移动入口一一对应。超星客户端使用独立的会话校验和座位首页。业务凭据不包含明文密码或二步验证码。
+
+`python login.py --check` 只检查已有凭据，不重新认证。凭据失效后重新登录。可通过 `--out`、`--out-chaoxing` 指定保存位置；there 也支持 `--cookie` 或 `SHU_SEAT_COOKIE` 导入当前本站 Cookie，之后仍会执行用户验证。
+
+![登录到预约流程](assets/login-to-booking.svg)
+
+## there 凭据
 
 `.credentials.json` 供 `poc.py` 复用，仅在移动页面解析与 profile 检查都通过后保存。
 检查至少包括业务 `code=0`、非空 id/name 和非匿名用户；回调 HTTP 200、
@@ -24,7 +37,7 @@ SSO 密码、二步和扫码协议复用固定版本的 git 子模块；`sso/` �
 ```json
 {
   "version": 1,
-  "created_at": "2026-10-03T00:00:00+08:00",
+  "created_at": "<生成时间>",
   "username": "<本人账号>",
   "display_name": "<姓名>",
   "room_type": "LIB_SEAT",
@@ -70,11 +83,9 @@ Cookie 数量、属性与有效期以当次服务的 Set-Cookie 为准，样例�
 `python login.py --check` 读取已有凭据做同一移动 profile 检查，不重新执行登录。
 凭据读取路径为显式参数、`SHU_SEAT_CREDENTIALS`、项目根 `.credentials.json` 的顺序。
 
-## 协议与来源
+## there 登录协议
 
-## 3 如何向 newsso 登录并换取 there 会话
-
-以下方法和字段来自 shu-sso-poc 固定提交 `941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b`，不是本次 HAR 实测的 SSO 契约。所列 JSON 字段是项目客户端提交或消费的结构；登录接口的完整原始响应和实际 HTTP 状态未提供。[systems/there.shu.edu.cn/README.md](https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/systems/there.shu.edu.cn/README.md)、[src/client.py](https://github.com/preca-hoshino/shu-sso-poc/blob/941c7d5ea876c3b511f1bf9a8862b0cf91df9c3b/src/client.py)。
+以下方法和字段由项目使用的统一认证子模块实现。登录接口的完整响应和实际 HTTP 状态以服务端为准。
 
 ### 3.1 there 的 OAuth 配置与初始化
 
@@ -165,9 +176,9 @@ Cookie 数量、属性与有效期以当次服务的 Set-Cookie 为准，样例�
 | 浏览器轮询 POST | `open.work.weixin.qq.com/wwopen/sso/lp/qrConnect` | 项目 there README 只记载方法与 URL；请求体未知 | 真实浏览器流程报告，响应体未提供。 |
 | newsso 回调 GET | `newsso.shu.edu.cn/oauth/wecom/qrcode` | code=企微 auth_code；state=编码上下文；appid=wxa8dea949443de641 | 项目报告更新 SHU_OAUTH2 后继续授权；源码判断错误跳转/正文。 |
 
-POC 轮询头为 Referer=https://open.work.weixin.qq.com/wwopen/sso/qrConnect、Origin=https://open.work.weixin.qq.com、x-requested-with=XMLHttpRequest、Accept 为 JavaScript 类型。这些头与 there 业务 WebView 的捕获值不同，分别按当前服务管理。POST /lp 的载荷未知，不能复制 GET /l 的查询字段当作已验证请求体。
+POC 轮询头为 Referer=https://open.work.weixin.qq.com/wwopen/sso/qrConnect、Origin=https://open.work.weixin.qq.com、x-requested-with=XMLHttpRequest、Accept 为 JavaScript 类型。这些请求头与 there 业务请求头分别管理。POST /lp 的载荷未知，不能复制 GET /l 的查询字段当作已验证请求体。
 
-JSONP 状态在源码中包括 QRCODE_SCAN_NEVER、QRCODE_SCAN_ING、QRCODE_SCAN_SUCC、QRCODE_SCAN_ERR、QRCODE_SCAN_OVERDUE、QRCODE_SCAN_CANCEL。SUCC 且 auth_code 有值后继续；错误、过期、取消停止。下面仅展示源码期望结构，没有原始响应样本：
+JSONP 状态在源码中包括 QRCODE_SCAN_NEVER、QRCODE_SCAN_ING、QRCODE_SCAN_SUCC、QRCODE_SCAN_ERR、QRCODE_SCAN_OVERDUE、QRCODE_SCAN_CANCEL。SUCC 且 auth_code 有值后继续；错误、过期、取消停止。下面展示客户端期望的状态结构：
 
 ```javascript
 jsonpCallback({"status":"QRCODE_SCAN_SUCC","auth_code":"<企微确认码>"})
@@ -175,7 +186,7 @@ jsonpCallback({"status":"QRCODE_SCAN_SUCC","auth_code":"<企微确认码>"})
 
 newsso 回调必须传 appid 是项目源码注释与错误处理给出的要求；缺失会 badRequestParams。源码也将 Location 中 message=wecomAuthFailed 视为失败。企微 auth_code 不是下一步 OAuth code，也不是二步验证码。
 
-项目构造二维码图片 `/wwopen/sso/qrImg?key=...` 和确认页 `/wwopen/sso/confirm2?k=...&notretry=yes` URL，没有请求或返回样本，放在第 7 节来源记录中。
+项目构造二维码图片 `/wwopen/sso/qrImg?key=...` 和确认页 `/wwopen/sso/confirm2?k=...&notretry=yes` URL；其响应结构未纳入本客户端接口定义。
 
 ### 3.4 授权与 there 回调
 
@@ -195,7 +206,7 @@ GET https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=eDrd-
 
 授权成功返回 302 Location 指向 there/login-oauth2 并携带 code。若 Location 包含 /oauth2/login/，项目视为 SSO 会话不可用。302 本身不是授权成功标志，应检查回调目标和 code。
 
-沿返回的回调地址访问 **GET there/login-oauth2?code=...**，并使用已初始化的本站 Cookie jar。项目 2026-10-05 复测记录：成功时更新 SPHYS_SESSION/authenticityToken，并 302 到同站**明文 http** 地址 —— 不带 state 直接授权时为 `http://there.shu.edu.cn/web?authJump=...`；经 `/login?from=web` 预置、带 state 发起时为 `http://there.shu.edu.cn/main?authJump=...`，再由 302 到 `/web`。明文地址由 http 侧 307 升到 https 后返回 200；项目实现不向明文地址发请求，而是把同站 http 地址升级为 https 后再跟随。这些页面不返回预约 API 的 JSON envelope。
+沿返回的回调地址访问 **GET there/login-oauth2?code=...**，并使用已初始化的本站 Cookie jar。项目按以下回调形态处理：成功时更新 SPHYS_SESSION/authenticityToken，并 302 到同站**明文 http** 地址 —— 不带 state 直接授权时为 `http://there.shu.edu.cn/web?authJump=...`；经 `/login?from=web` 预置、带 state 发起时为 `http://there.shu.edu.cn/main?authJump=...`，再由 302 到 `/web`。明文地址由 http 侧 307 升到 https 后返回 200；项目实现不向明文地址发请求，而是把同站 http 地址升级为 https 后再跟随。这些页面不返回预约 API 的 JSON envelope。
 
 | 本站路由 | 参数 | 项目记录的返回 |
 | --- | --- | --- |
@@ -205,10 +216,10 @@ GET https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=eDrd-
 
 登录完成判据设计：先核对回调落地 /web 与页面特征，再进入选定移动页面获取登录用户/sessionId，最后用 profile.code=0 且非匿名的用户信息确认业务会话。/shu、/shu/booking.html、/shu/rule.html 是项目所述公开介绍页，不作为登录成功判据。仅 HTTP 200 或仅 URL 含 there 域名都不足以排除空回调失败。
 
-项目描述本站后端用授权码换 token，但没有给出其实际内部请求、client secret 和完整响应。本文不提供一个前端 token 交换契约。授权码长度、authJump 长度只为项目所述样本，未固定成格式限制。
+项目描述本站后端用授权码换 token，但没有给出其实际内部请求、client secret 和完整响应。本文不提供一个前端 token 交换契约。授权码和 authJump 的长度不固定。
 
 ### 3.5 登录到移动预约的接点
 
-本站会话建立后选择四入口之一，从其 HTML 的 loginUser/sessionId 引导数据取得当前身份与业务会话值，随后按第 2 节发送 API。四个入口返回的 HTML 均有这些数据，且 x-hys-session 与各自 sessionId 一致。每个入口首次未登录的实际跳转分支尚未捕获；此接点是项目与 HAR 的证据拼接。
+本站会话建立后选择四入口之一，从其 HTML 的 loginUser/sessionId 引导数据取得当前身份与业务会话值，随后按[there API](api.md)发送 API。四个入口返回的 HTML 均有这些数据，且 x-hys-session 与各自 sessionId 一致。登录跳转与页面内容应按当前服务端行为处理。
 
 ![登录到预约流程](assets/login-to-booking.svg)

@@ -16,6 +16,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import Mock
 from urllib.parse import parse_qs, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,11 +24,13 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import requests  # noqa: E402
+import poc  # noqa: E402
 
 from test_offline import OfflineCase  # noqa: E402
 
 from seat.chaoxing import credentials as cx_creds  # noqa: E402
 from seat.chaoxing import enc  # noqa: E402
+from seat.chaoxing import ui as cx_ui  # noqa: E402
 from seat.chaoxing.client import (  # noqa: E402
     BusinessError, ChaoxingClient, ProtocolError, SessionExpired, SubmissionThrottled,
     parse_user_info,
@@ -46,6 +49,12 @@ PARAMS_1 = {"captcha": "", "day": "2026-10-05", "deptIdEnc": "00bae7f2bdea485a",
             "endTime": "22:00", "roomId": "6508", "seatNum": "135",
             "startTime": "21:00", "wyToken": ""}
 PARAMS_2 = {**PARAMS_1, "seatNum": "099"}
+
+# 续约来自另一个 code 页，签名输入没有 deptIdEnc。以下全是合成数据。
+RENEW_SALT = "0123456789abcdef0123456789abcdef_123456"
+RENEW_ENC = "ccfa62df68a34fa6a41b89f985ae5112"
+RENEW_PARAMS = {"captcha": "", "day": "2030-01-01", "endTime": "11:00",
+                "roomId": "6508", "seatNum": "048", "startTime": "10:00", "wyToken": ""}
 
 
 def seat_page_html() -> str:
@@ -82,6 +91,14 @@ class EncVectorTests(unittest.TestCase):
             enc.build_enc({**PARAMS_1, "extra": "x"}, REAL_SALT_1)
         with self.assertRaises(enc.SignatureError):
             enc.build_enc(PARAMS_1, "  ")
+
+    def test_renew_signature_has_seven_fields_and_synthetic_vector(self):
+        self.assertEqual(enc.build_renew_enc(RENEW_PARAMS, RENEW_SALT), RENEW_ENC)
+        with self.assertRaises(enc.SignatureError):
+            enc.build_renew_enc({**RENEW_PARAMS, "deptIdEnc": "fixture"}, RENEW_SALT)
+        with self.assertRaises(enc.SignatureError):
+            enc.build_renew_enc({k: v for k, v in RENEW_PARAMS.items()
+                                 if k != "wyToken"}, RENEW_SALT)
 
     def test_parse_salt_from_select_html(self):
         self.assertEqual(enc.parse_salt(select_page_html()), REAL_SALT_1)
@@ -191,6 +208,133 @@ class QueryTests(ChaoxingCase):
         self.assertTrue(available["derived"])
 
 
+class FollowupCaptureTests(ChaoxingCase):
+    """2026-10-19 续约、签到与暂离流程新见端点；响应均为合成夹具。"""
+
+    def test_reserve_info_supports_captured_get_and_post_forms(self):
+        client = self.cx_client()
+        detail = {"success": True, "data": {
+            "seatConfig": {"preSignDuration": 20}, "scannerBluetooth": False,
+            "openDialog": False, "beforeOpenTimeStamp": None,
+            "seatReserve": {"id": 12345, "seatNum": "006", "status": 0},
+        }}
+        self.wire.add("GET", "/data/apps/seat/reserve/info", detail)
+        self.wire.add("POST", "/data/apps/seat/reserve/info", detail)
+        # reserve/info 的 id 是 roomId；seatReserve.id 才供 sign / leave 使用。
+        self.assertEqual(client.reserve_info(6508, "006"), detail)
+        self.assertEqual(client.reserve_info(6508, "006", method="POST"), detail)
+        get_request, post_request = (call[0] for call in self.wire.calls)
+        self.assertEqual(parse_qs(urlsplit(get_request.url).query),
+                         {"id": ["6508"], "seatNum": ["6"]})
+        self.assertEqual(urlsplit(post_request.url).query, "")
+        self.assertEqual(form_of(post_request), {"id": ["6508"], "seatNum": ["6"]})
+        for request in (get_request, post_request):
+            referer = urlsplit(request.headers["Referer"])
+            self.assertEqual(referer.path, "/front/apps/seat/code")
+            self.assertEqual(parse_qs(referer.query),
+                             {"id": ["6508"], "seatNum": ["6"]})
+
+    def test_used_times_keeps_captured_two_dimensional_timestamp_shape(self):
+        client = self.cx_client()
+        used = {"success": True, "data": [[1893456000000, 1893459600000]]}
+        self.wire.add("POST", "/data/apps/seat/getusedtimes", used)
+        self.assertEqual(client.used_times(6508, "006", "2030-01-01"), used)
+        self.assertEqual(form_of(self.wire.calls[-1][0]), {
+            "roomId": ["6508"], "seatNum": ["006"], "day": ["2030-01-01"],
+            "fidEnc": ["00bae7f2bdea485a"],
+        })
+        # 续约页可内嵌与默认配置不同的 fidEnc；请求需允许传入页面值。
+        self.wire.add("POST", "/data/apps/seat/getusedtimes", used)
+        self.assertEqual(client.used_times(6508, "006", "2030-01-01",
+                                           fid_enc="fixture-page-fid"), used)
+        self.assertEqual(form_of(self.wire.calls[-1][0])["fidEnc"],
+                         ["fixture-page-fid"])
+
+    def test_room_info_accepts_code_page_form_without_day(self):
+        client = self.cx_client()
+        info = {"success": True, "data": {"seatRoom": {"id": 6508}}}
+        self.wire.add("POST", "/data/apps/seat/room/info", info)
+        self.assertEqual(client.room_info(6508, fid_enc="fixture-page-fid"), info)
+        self.assertEqual(form_of(self.wire.calls[-1][0]),
+                         {"id": ["6508"], "fidEnc": ["fixture-page-fid"]})
+        self.wire.add("POST", "/data/apps/seat/room/info", info)
+        self.assertEqual(client.room_info(6508, "2030-01-01"), info)
+        self.assertEqual(form_of(self.wire.calls[-1][0]), {
+            "id": ["6508"], "toDay": ["2030-01-01"],
+            "fidEnc": ["00bae7f2bdea485a"], "queryReserve": ["true"],
+        })
+
+    def test_sign_and_leave_accept_success_envelopes_without_data(self):
+        client = self.cx_client()
+        self.wire.add("GET", "/data/apps/seat/sign", {"success": True})
+        self.wire.add("POST", "/data/apps/seat/leave", {"success": True})
+        self.assertEqual(client.sign(12345), {"success": True})
+        self.assertEqual(client.leave(12345), {"success": True})
+        sign_request, leave_request = (call[0] for call in self.wire.calls)
+        self.assertEqual(parse_qs(urlsplit(sign_request.url).query), {"id": ["12345"]})
+        self.assertEqual(form_of(leave_request), {"id": ["12345"]})
+        for request in (sign_request, leave_request):
+            self.assertEqual(urlsplit(request.headers["Referer"]).path,
+                             "/front/apps/seat/code")
+
+    def test_signback_uses_home_get_and_accepts_empty_success_envelope(self):
+        client = self.cx_client()
+        self.wire.add("GET", "/data/apps/seat/signback", {"success": True})
+        self.assertEqual(client.signback(12345), {"success": True})
+        request, _ = self.wire.calls[-1]
+        self.assertEqual(parse_qs(urlsplit(request.url).query), {"id": ["12345"]})
+        self.assertEqual(urlsplit(request.headers["Referer"]).path,
+                         "/front/third/apps/seat/index")
+        self.assertIsNone(request.body)
+
+    def test_risk_config_and_address_use_captured_parameter_names(self):
+        client = self.cx_client()
+        risk = {"success": True, "data": {"riskCheckOpen": False,
+                                            "riskCheckType": "none"}}
+        address = {"success": True, "data": {"addressArr": [
+            {"location": "fixture", "offset": 0, "offsetReal": 0}]}}
+        self.wire.add("POST", "/data/apps/seat/risk/check/config", risk)
+        self.wire.add("GET", "/data/apps/seat/address", address)
+        self.assertEqual(client.risk_config("seat", "fixture-app"), risk)
+        self.assertEqual(client.address(35480, 6508), address)
+        risk_request, address_request = (call[0] for call in self.wire.calls)
+        self.assertEqual(form_of(risk_request),
+                         {"appType": ["seat"], "appId": ["fixture-app"]})
+        self.assertEqual(parse_qs(urlsplit(address_request.url).query),
+                         {"deptId": ["35480"], "roomId": ["6508"]})
+
+    def test_domain_rules_and_i18n_have_no_request_parameters(self):
+        client = self.cx_client()
+        rules = {"success": True, "data": {"rules": []}}
+        i18n = {"success": True, "data": {"fixtureKey": "fixture translation"}}
+        self.wire.add("GET", "/data/apps/reserve/link/domain/rules", rules)
+        self.wire.add("GET", "/data/apps/seat/i18n", i18n)
+        self.assertEqual(client.link_domain_rules(), rules)
+        self.assertEqual(client.i18n(), i18n)
+        self.assertTrue(all(not urlsplit(request.url).query
+                            for request, _ in self.wire.calls))
+
+    def test_existing_read_only_wrappers_use_captured_paths_and_queries(self):
+        client = self.cx_client()
+        fixture = {"success": True, "data": {"fixture": True}}
+        fid = "00bae7f2bdea485a"
+        cases = (
+            ("cur_used", (), "/data/apps/seat/curusedshow", {"fidEnc": [fid]}),
+            ("person_role", (), "/data/apps/seat/person/role", {"fidEnc": [fid]}),
+            ("entrance_config", ("2",), "/data/apps/seat/entrance/config",
+             {"appType": ["2"], "fidEnc": [fid]}),
+            ("identity_verify", ("fixture-map",), "/data/apps/seat/identity/verify",
+             {"mappId": ["fixture-map"], "fidEnc": [fid]}),
+        )
+        for method, arguments, path, query in cases:
+            with self.subTest(method=method):
+                self.wire.add("GET", path, fixture)
+                self.assertEqual(getattr(client, method)(*arguments), fixture)
+                request, _ = self.wire.calls[-1]
+                self.assertEqual(urlsplit(request.url).path, path)
+                self.assertEqual(parse_qs(urlsplit(request.url).query), query)
+
+
 class SubmitTests(ChaoxingCase):
     def test_submit_fetches_fresh_salt_and_signs_form(self):
         client = self.cx_client()
@@ -253,6 +397,118 @@ class SubmitTests(ChaoxingCase):
         self.assertEqual(client.cancel(194166871), {"success": True})
         self.assertEqual(parse_qs(urlsplit(self.wire.calls[-1][0].url).query)["id"],
                          ["194166871"])
+
+
+class RenewTests(ChaoxingCase):
+    """code 页的续约提交与选座 select 页是两条不同签名路径。"""
+
+    @staticmethod
+    def code_page_html():
+        return ("<html><script>var signType = '0', "
+                "fidEnc = 'fixture-page-fid', uniqueDomainPath = '';</script>"
+                f'<input type="hidden" id="submit_enc" value="{RENEW_SALT}"/></html>')
+
+    def test_prepare_renew_reads_code_page_and_only_prepares_seven_fields(self):
+        client = self.cx_client()
+        self.wire.add("GET", "/front/apps/seat/code", self.code_page_html())
+        prepared = client.prepare_renew(6508, "2030-01-01", "10:00", "11:00", "048")
+        request, _ = self.wire.calls[-1]
+        self.assertEqual(parse_qs(urlsplit(request.url).query),
+                         {"id": ["6508"], "seatNum": ["48"]})
+        self.assertEqual(prepared["form"], {**RENEW_PARAMS, "enc": RENEW_ENC})
+        self.assertEqual(prepared["fidEnc"], "fixture-page-fid")
+        self.assertEqual(len(self.wire.calls), 1, "准备续约时不可提交预约")
+
+    def test_renew_posts_signed_form_without_dept_id_enc(self):
+        client = self.cx_client()
+        self.wire.add("GET", "/front/apps/seat/code", self.code_page_html())
+        success = {"success": True, "data": {"seatReserve": {"id": 12345,
+                                                            "seatNum": "048"}}}
+        self.wire.add("POST", "/data/apps/seat/submit", success)
+        self.assertEqual(client.renew(6508, "2030-01-01", "10:00", "11:00", "048"), success)
+        self.assertEqual(form_of(self.wire.calls[-1][0]),
+                         {key: [value] for key, value in
+                          {**RENEW_PARAMS, "enc": RENEW_ENC}.items()})
+        self.assertEqual([urlsplit(request.url).path for request, _ in self.wire.calls],
+                         ["/front/apps/seat/code", "/data/apps/seat/submit"])
+
+    def test_prepared_renew_json_hides_salt_and_personal_identifiers(self):
+        client = self.cx_client()
+        self.wire.add("GET", "/front/apps/seat/code", self.code_page_html())
+        prepared = client.prepare_renew(6508, "2030-01-01", "10:00", "11:00", "048")
+        printable = cx_ui.safe_output({
+            "prepared_renew": prepared,
+            "user": {"uid": "fixture-private-uid", "sno": "fixture-private-sno",
+                     "uname": "fixture-private-name", "mobile": "fixture-private-phone"},
+            "submit_enc": "fixture-hidden-submit-token",
+        })
+        encoded = json.dumps(printable, ensure_ascii=False)
+        for private in (RENEW_SALT, "fixture-private-uid", "fixture-private-sno",
+                        "fixture-private-name", "fixture-private-phone",
+                        "fixture-hidden-submit-token"):
+            self.assertNotIn(private, encoded)
+        self.assertEqual(printable["prepared_renew"]["salt"], "<redacted>")
+        self.assertEqual(printable["prepared_renew"]["form"]["roomId"], "6508")
+
+
+class ChaoxingCliTests(unittest.TestCase):
+    """仅测参数解析与客户端分发；不加载凭据也不触发网络。"""
+
+    def test_renew_dry_run_dispatches_only_prepare(self):
+        args = poc.build_parser().parse_args([
+            "--system", "chaoxing", "renew", "--room", "6508", "--day", "2030-01-01",
+            "--begin", "10:00", "--end", "11:00", "--seat", "048", "--dry-run",
+        ])
+        client = Mock()
+        client.prepare_renew.return_value = {"form": {**RENEW_PARAMS, "enc": RENEW_ENC},
+                                             "salt": RENEW_SALT}
+        result = poc.run_cx_command(client, args)
+        self.assertEqual(args.system, "chaoxing")
+        self.assertTrue(result["dry_run"])
+        self.assertFalse(result["submitted"])
+        client.prepare_renew.assert_called_once_with(
+            "6508", "2030-01-01", "10:00", "11:00", "048")
+        client.renew.assert_not_called()
+
+    def test_reserve_info_post_and_seat_actions_dispatch(self):
+        client = Mock()
+        client.reserve_info.return_value = {"success": True, "data": {}}
+        args = poc.build_parser().parse_args([
+            "--system", "chaoxing", "reserve-info", "--room", "6508",
+            "--seat", "048", "--post",
+        ])
+        self.assertEqual(poc.run_cx_command(client, args), client.reserve_info.return_value)
+        client.reserve_info.assert_called_once_with("6508", "048", method="POST")
+        for operation in ("sign", "signback", "leave"):
+            with self.subTest(operation=operation):
+                client = Mock()
+                getattr(client, operation).return_value = {"success": True}
+                client.recent.return_value = {"current": []}
+                args = poc.build_parser().parse_args([
+                    "--system", "chaoxing", operation, "12345",
+                ])
+                result = poc.run_cx_command(client, args)
+                getattr(client, operation).assert_called_once_with("12345")
+                self.assertEqual(result["operation"], operation)
+                self.assertEqual(result["reserve_id"], "12345")
+
+    def test_existing_read_only_commands_parse_and_dispatch(self):
+        cases = (
+            ("cur-used", [], "cur_used", ()),
+            ("person-role", [], "person_role", ()),
+            ("entrance-config", ["--app-type", "2"], "entrance_config", ("2",)),
+            ("identity-verify", ["--mapp-id", "fixture-map"], "identity_verify",
+             ("fixture-map",)),
+        )
+        for command, options, method, arguments in cases:
+            with self.subTest(command=command):
+                args = poc.build_parser().parse_args(
+                    ["--system", "chaoxing", command, *options])
+                client = Mock()
+                getattr(client, method).return_value = {"success": True}
+                self.assertEqual(args.system, "chaoxing")
+                self.assertEqual(poc.run_cx_command(client, args), {"success": True})
+                getattr(client, method).assert_called_once_with(*arguments)
 
 
 class CredentialsTests(unittest.TestCase):
